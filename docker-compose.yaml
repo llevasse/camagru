@@ -1,0 +1,20 @@
+
+services:
+  nginx:
+    build: nginx
+    image: nginx:latest
+    container_name: nginx-container
+    ports:
+      - "833:443"
+    volumes:
+      - nginx:/usr/share/nginx/html
+
+
+volumes:
+  nginx:
+    name: nginx-volumes
+    driver: local
+    driver_opts:
+      type: none
+      device: ./nginx/html
+      o: bind

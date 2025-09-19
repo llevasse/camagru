@@ -1,8 +1,0 @@
-
-services:
-  nginx:
-    build: nginx
-    image: nginx:latest
-    container_name: nginx-container
-    ports:
-      - "833:443"
