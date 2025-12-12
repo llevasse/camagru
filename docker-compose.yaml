@@ -1,11 +1,32 @@
 
 services:
+  mysql:
+    build: mysql
+    container_name: mysql-camagru-database
+    volumes:
+      - db_volume:/var/lib/mysql/
+    ports:
+      - "3336:3306"
+    env_file:
+      - .env
+    networks:
+      - camagru
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
   nginx:
     build: nginx
     image: nginx:latest
     container_name: nginx-container
     ports:
       - "833:443"
+    networks:
+      - camagru
+    depends_on:
+      mysql:
+        condition: service_healthy
     volumes:
       - nginx:/usr/share/nginx/
       - php_code:/var/www/php
@@ -13,6 +34,11 @@ services:
     build: ./php
     expose:
       - 9000
+    networks:
+      - camagru
+    depends_on:
+      mysql:
+        condition: service_healthy
     volumes:
       - php_code:/var/www/php
 
@@ -31,3 +57,15 @@ volumes:
       type: none
       device: ./php/code
       o: bind
+  db_volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./db
+      
+  
+networks:
+  camagru:
+    name: camagru
+    driver: bridge
