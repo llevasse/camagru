@@ -7,8 +7,14 @@ services:
     ports:
       - "833:443"
     volumes:
-      - nginx:/usr/share/nginx/html
-
+      - nginx:/usr/share/nginx/
+      - php_code:/var/www/php
+  php:
+    build: ./php
+    expose:
+      - 9000
+    volumes:
+      - php_code:/var/www/php
 
 volumes:
   nginx:
@@ -16,5 +22,12 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: ./nginx/html
+      device: ./front
+      o: bind
+  php_code:
+    name: php-volumes
+    driver: local
+    driver_opts:
+      type: none
+      device: ./php/code
       o: bind
