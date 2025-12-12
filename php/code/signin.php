@@ -44,12 +44,14 @@
   if ($stmt->bind_param("sss", $email, $username, $password) === false) {
     error_quit("SQL params binding failed: " . $stmt->error);
   }
-  if ($stmt->execute() === false) {
-    error_quit("SQL execute failed: " . $stmt->error);
+  try{
+    if ($stmt->execute() === false) {
+      error_quit("SQL execute failed: " . $stmt->error);
+    }
+    echo "New user created successfully";
   }
-  echo "New user created successfully";
-  
-  $stmt->close();
-  
-  // print_r($input);
+  catch(Exception $e){
+    error_quit("". $e->getMessage());
+  }
+  $stmt->close();  
 ?>
