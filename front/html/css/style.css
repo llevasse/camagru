@@ -37,3 +37,69 @@ h1{
 #container{
   height: 100%;
 }
+
+#navbar{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  padding: .5rem;
+  
+  a {
+    margin: 1rem;
+    display: block;
+    text-decoration: none;
+    color: var(--color-two);
+    transition: 500ms;
+    
+  }
+  a:hover{
+    color: var(--color-one);
+  }
+  
+  
+  .log-buttons-logged{
+    display: none;
+  }
+  
+  .logged#log-buttons{
+    .log-buttons-unlogged{
+      display: none;
+    }
+    .log-buttons-logged{
+      display: block;
+    }
+  }
+  
+  #log-buttons{
+    background-color: var(--color-one);
+    border-radius: .6rem;
+    
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+    padding: 1rem;
+    
+    a{
+      margin: 0rem;
+      height: fit-content;
+      align-self: center;
+    }
+    a:hover{
+      color: var(--color-foor);
+    }
+    
+    
+    .separator{
+      width: 1px;
+      background-color: var(--color-two);
+    }
+    
+    /* a:first-child{
+      margin-right: 0;
+    }
+    
+    a:last-child{
+      margin-left: 0;
+    } */
+  }
+}

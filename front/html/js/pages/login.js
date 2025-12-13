@@ -1,6 +1,3 @@
-// const authService = new AuthService();
-// import {AuthService} from "./services/auth_service.js";
-
 var body = `
   <h1>Camagru</h1>
   <link id="style" rel="stylesheet" href="/css/form.css">

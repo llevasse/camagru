@@ -21,16 +21,16 @@ form{
     display: flex;
     flex-direction: column;
     
-    input{
-      width: max-content;
-      padding: .5em;
-      margin: 0.5em 1em 0;
-      box-sizing: border-box;
-      background: var(--color-foor);
-      border: 0;
-      border-radius: 0.6em;
-      outline: none;
-    }
+  }
+  input{
+    width: max-content;
+    padding: .5em;
+    margin: 0.5em 1em 0;
+    box-sizing: border-box;
+    background: var(--color-foor);
+    border: 0;
+    border-radius: 0.6em;
+    outline: none;
   }
   
   button{

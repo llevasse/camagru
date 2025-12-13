@@ -1,7 +1,7 @@
 const routes = {
-  "/sign-in": `https://localhost:833/js/sign-in.js`,
-  "/login": `https://localhost:833/js/login.js`,
-  "/": `https://localhost:833/js/home.js`,
+  "/sign-in": `https://localhost:833/js/pages/sign-in.js`,
+  "/login": `https://localhost:833/js/pages/login.js`,
+  "/": `https://localhost:833/js/pages/home.js`,
 }
 
 const authService = new AuthService();
@@ -23,11 +23,14 @@ async function load(){
   // console.log(url.pathname);
   
   userClient = await userService.getClient();
-  
-  console.log(userClient);
-  
-  if (!userClient){
-    path = "/login";
+  var logButtons = document.querySelector("#log-buttons");
+  if (userClient){
+    if (!logButtons.classList.contains("logged")){
+      logButtons.classList.add("logged")
+    }
+  }
+  else{
+    logButtons.classList.remove("logged")
   }
   
   if (routes[path]){

@@ -1,5 +1,6 @@
 var body = `
-  <h1>Sign in</h1>
+  <h1>Camagru</h1>
+  <link id="style" rel="stylesheet" href="/css/form.css">
   <div >
     <form autocomplete=on id="signin-form" onsubmit="signin(event)" style="display: flex; flex-direction: column;">
       <label>
@@ -21,7 +22,9 @@ var body = `
 `
 
 {
+  history.replaceState("","","https://localhost:833/sign-in")
 	document.getElementById("container").innerHTML = body;
+	localStorage.removeItem("token");
 }
 
 async function signin(event){
@@ -31,27 +34,14 @@ async function signin(event){
   const username_input = document.querySelector("#username-input");
   const return_value = document.querySelector("#return-value");
   
-  await fetch("https://localhost:833/signin.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body:JSON.stringify({
-      "username":username_input.value,
-      "email":email_input.value,
-      "password":password_input.value
-    })
-  }).then(async (value)=>{
-    return_value.innerHTML = await value.json().then((obj)=>{
-      var message = "";
-      if (obj['message']){
-        message = obj['message'];
-      }
-      else
-        message = JSON.stringify(obj);
-      return message;
-    })
-    return 1;
-  });
+  const error = await authService.signin(username_input.value, email_input.value, password_input.value);
+  if (!error){
+    await authService.login(username_input.value, password_input.value);
+    myPushState("https://localhost:833/");
+  }
+  else {
+    return_value.innerHTML = error;
+  }
+  
   return false;
 }
