@@ -17,10 +17,11 @@ window.addEventListener("load", (e) => {
 	load();
 })
 
-async function load(){
+async function load(path = null){
 	const url = new URL(window.location.href);
-	var path = url.pathname;
-  // console.log(url.pathname);
+	if (path == null){
+	  path = url.pathname;
+	}
   
   userClient = await userService.getClient();
   var logButtons = document.querySelector("#log-buttons");

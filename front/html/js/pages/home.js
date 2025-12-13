@@ -3,5 +3,6 @@ var body = `
 `
 
 {
+  history.replaceState("","","https://localhost:833/")
 	document.getElementById("container").innerHTML = body;
 }
