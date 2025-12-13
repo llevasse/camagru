@@ -1,0 +1,22 @@
+meta {
+  name: email missing
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://localhost:833/signin.php
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username":"test01",
+    "password":"root1234"
+  }
+}
+
+assert {
+  : 
+}
