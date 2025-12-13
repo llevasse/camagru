@@ -2,25 +2,26 @@
 // import {AuthService} from "./services/auth_service.js";
 
 var body = `
-  <h1>Login</h1>
-  <div >
-    <form id="login-form" onsubmit="login(event)" style="display: flex; flex-direction: column;">
-      <label>
-        <span>Username</span>
-        <input type="text" id="username-input" autocomplete="username">
-      </label>
-      <label>
-        <span>Password</span>
-        <input type="password" id="password-input" autocomplete="password">
-      </label>
-      <button type="submit">Login</button>
-      <small id="return-value"></small>
-    </form>
-  </div>
+  <h1>Camagru</h1>
+  <link id="style" rel="stylesheet" href="/css/form.css">
+  <form autocomplete=on id="login-form" onsubmit="login(event)">
+    <label>
+      <span>Username</span>
+      <input placeholder="Username..." type="text" id="username-input" autocomplete="username">
+    </label>
+    <label>
+      <span>Password</span>
+      <input placeholder="Password..." type="password" id="password-input" autocomplete>
+    </label>
+    <button type="submit">Login</button>
+    <small id="return-value"></small>
+  </form>
 `
 
 {
+  history.replaceState("","","https://localhost:833/login")
 	document.getElementById("container").innerHTML = body;
+	localStorage.removeItem("token");
 }
 
 async function login(event){

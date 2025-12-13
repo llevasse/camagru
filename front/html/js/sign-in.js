@@ -1,7 +1,7 @@
 var body = `
   <h1>Sign in</h1>
   <div >
-    <form id="signin-form" onsubmit="signin(event)" style="display: flex; flex-direction: column;">
+    <form autocomplete=on id="signin-form" onsubmit="signin(event)" style="display: flex; flex-direction: column;">
       <label>
         <span>Username</span>
         <input type="text" id="username-input" autocomplete="username">
@@ -12,7 +12,7 @@ var body = `
       </label>
       <label>
         <span>Password</span>
-        <input type="password" id="password-input" autocomplete="new-password">
+        <input type="password" id="password-input" autocomplete>
       </label>
       <button type="submit">sign in</button>
       <small id="return-value"></small>
