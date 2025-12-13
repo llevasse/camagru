@@ -1,6 +1,6 @@
 @font-face{
 	font-family: 'monocraft';
-	src: url('fonts/Monocraft.ttc');
+	src: url('../fonts/Monocraft.ttf') format('truetype');
 }
 
 :root{
@@ -42,18 +42,19 @@ h1{
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  padding: .5rem;
+  padding: .7rem;
+  background-color: var(--color-one);
   
   a {
     margin: 1rem;
     display: block;
     text-decoration: none;
     color: var(--color-two);
-    transition: 500ms;
+    transition: 200ms;
     cursor: pointer;
   }
   a:hover{
-    color: var(--color-one);
+    color: var(--color-foor);
   }
   
   
@@ -71,7 +72,7 @@ h1{
   }
   
   #log-buttons{
-    background-color: var(--color-one);
+    background-color: var(--color-foor);
     border-radius: .6rem;
     
     display: flex;
@@ -85,7 +86,7 @@ h1{
       align-self: center;
     }
     a:hover{
-      color: var(--color-foor);
+      color: var(--color-one);
     }
     
     
