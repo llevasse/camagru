@@ -1,9 +1,9 @@
 <?php
   ob_start();
-  function error_quit($error) {
+  function quit($json, $response_code = 200) {
     ob_clean();
-    http_response_code(400);
-    die($error);
+    http_response_code($response_code);
+    die($json);
   }
 
   $db_password = ($_ENV['DB_PASSWORD']);
@@ -13,7 +13,7 @@
   $conn = mysqli_connect($db_host, $db_user, $db_password);
   
   if ($conn->connect_error) {
-    error_quit("Connection failed: " . $conn->connect_error);
+    quit(json_encode(array("message"=> "Connection failed: " . $conn->connect_error)), 400);
   }  
   
   $input = $_POST;
@@ -21,7 +21,7 @@
     $json = file_get_contents('php://input');
     $input = json_decode($json, true);
     if (json_last_error() !== JSON_ERROR_NONE){
-      error_quit('Error parsing json : '. json_last_error_msg());
+      quit(json_encode(array("message"=> "Error parsing json : ". json_last_error_msg())), 400);
     }
   }
   
@@ -29,29 +29,47 @@
   $stmt = $conn->prepare($sql);
   $email = $input['email'];
   if (!$email){
-    error_quit("No email provided");
+    quit(json_encode(array("message"=> "No email provided")), 400);
   }
   $username = $input['username'];
   if (!$email){
-    error_quit("No email provided");
+    quit(json_encode(array("message"=> "No username provided")), 400);
   }
   $password = $input['password'];
   if (!$password){
-    error_quit("No password provided");
+    quit(json_encode(array("message"=> "No password provided")), 400);
   }
   $password = password_hash($input['password'], PASSWORD_DEFAULT);
   
   if ($stmt->bind_param("sss", $email, $username, $password) === false) {
-    error_quit("SQL params binding failed: " . $stmt->error);
+    quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);
   }
   try{
     if ($stmt->execute() === false) {
-      error_quit("SQL execute failed: " . $stmt->error);
+      quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
     }
-    echo "New user created successfully";
+    quit(json_encode(array("message"=>"User created successfully")));
   }
-  catch(Exception $e){
-    error_quit("". $e->getMessage());
+  catch(mysqli_sql_exception $e){
+    $message = $e->getMessage();
+    // duplicate entry
+    if ($e->getCode() === 1062){  
+      $split = explode(" ", $e->getMessage());
+      $column = end($split);
+      switch ($column){
+        case "'users.username'":
+          $message = "This username is already taken";
+          break;
+        case "'users.email'":
+          $message = "This email is already taken";
+          break;
+      }
+      
+    }
+    quit(json_encode(array(
+      "message" => $message,
+    )), 400);
+    
   }
   $stmt->close();  
 ?>
