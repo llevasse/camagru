@@ -1,4 +1,9 @@
 class AuthService{
+  logout(){
+    localStorage.removeItem('token');
+    load();
+  }
+
   async login(username, password){
     return await fetch("https://localhost:833/login.php", {
       method: "POST",
