@@ -1,4 +1,4 @@
-const body = `
+var body = `
   <h1>Sign in</h1>
   <div >
     <form id="signin-form" onsubmit="signin(event)" style="display: flex; flex-direction: column;">

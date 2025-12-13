@@ -1,0 +1,15 @@
+meta {
+  name: profile
+  type: http
+  seq: 1
+}
+
+get {
+  url: https://localhost:833/profile.php
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjMsInVzZXJuYW1lIjoidGVzdDAxIiwiZXhwIjoxNzY1NzIwMzk5fQ.3iIBt5PBM55LYL2wkF17Kzskh7kWKqhTXZ2SXgSPG7I
+}

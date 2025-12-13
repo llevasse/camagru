@@ -1,4 +1,7 @@
-const body = `
+// const authService = new AuthService();
+// import {AuthService} from "./services/auth_service.js";
+
+var body = `
   <h1>Login</h1>
   <div >
     <form id="login-form" onsubmit="login(event)" style="display: flex; flex-direction: column;">
@@ -23,31 +26,15 @@ const body = `
 async function login(event){
   event.preventDefault();
   const password_input = document.querySelector("#password-input");
-  const email_input = document.querySelector("#email-input");
   const username_input = document.querySelector("#username-input");
   const return_value = document.querySelector("#return-value");
   
-  await fetch("https://localhost:833/login.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body:JSON.stringify({
-      "username":username_input.value,
-      "email":email_input.value,
-      "password":password_input.value
-    })
-  }).then(async (value)=>{
-    return_value.innerHTML = await value.json().then((obj)=>{
-      var message = "";
-      if (obj['message']){
-        message = obj['message'];
-      }
-      else
-        message = JSON.stringify(obj);
-      return message;
-    })
-    return 1;
-  });
+  const error = await authService.login(username_input.value, password_input.value);
+  if (!error){
+    myPushState("https://localhost:833/");
+  }
+  else {
+    return_value.innerHTML = error;
+  }
   return false;
 }
