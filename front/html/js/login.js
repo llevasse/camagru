@@ -1,20 +1,16 @@
 const body = `
-  <h1>Sign in</h1>
+  <h1>Login</h1>
   <div >
-    <form id="signin-form" onsubmit="signin(event)" style="display: flex; flex-direction: column;">
+    <form id="login-form" onsubmit="login(event)" style="display: flex; flex-direction: column;">
       <label>
         <span>Username</span>
         <input type="text" id="username-input" autocomplete="username">
       </label>
       <label>
-        <span>Email</span>
-        <input type="email" id="email-input" autocomplete="email">
-      </label>
-      <label>
         <span>Password</span>
-        <input type="password" id="password-input" autocomplete="new-password">
+        <input type="password" id="password-input" autocomplete="password">
       </label>
-      <button type="submit">sign in</button>
+      <button type="submit">Login</button>
       <small id="return-value"></small>
     </form>
   </div>
@@ -24,14 +20,14 @@ const body = `
 	document.getElementById("container").innerHTML = body;
 }
 
-async function signin(event){
+async function login(event){
   event.preventDefault();
   const password_input = document.querySelector("#password-input");
   const email_input = document.querySelector("#email-input");
   const username_input = document.querySelector("#username-input");
   const return_value = document.querySelector("#return-value");
   
-  await fetch("https://localhost:833/signin.php", {
+  await fetch("https://localhost:833/login.php", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

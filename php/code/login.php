@@ -1,4 +1,6 @@
 <?php
+  include_once("jwt.php");
+
   ob_start();
   function quit($json, $response_code = 200) {
     ob_clean();
@@ -25,12 +27,8 @@
     }
   }
   
-  $sql = "INSERT INTO camagru.users (email, username, password_hash) VALUES (?, ?, ?)";
+  $sql = "SELECT * FROM camagru.users WHERE username = ?";
   $stmt = $conn->prepare($sql);
-  $email = $input['email'];
-  if (!$email){
-    quit(json_encode(array("message"=> "No email provided")), 400);
-  }
   $username = $input['username'];
   if (!$username){
     quit(json_encode(array("message"=> "No username provided")), 400);
@@ -39,33 +37,33 @@
   if (!$password){
     quit(json_encode(array("message"=> "No password provided")), 400);
   }
-  $password = password_hash($input['password'], PASSWORD_DEFAULT);
   
-  if ($stmt->bind_param("sss", $email, $username, $password) === false) {
+  if ($stmt->bind_param("s", $username) === false) {
     quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);
   }
   try{
     if ($stmt->execute() === false) {
       quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
     }
-    quit(json_encode(array("message"=>"User created successfully")));
+    $result = $stmt->get_result();
+    $result = $result->fetch_assoc();
+    if (password_verify($password, $result['password_hash']) == false){
+      quit(json_encode(array("message"=>"Incorrect password")), 400);
+    }
+    $jwtCtrl = new Jwt($_ENV['JWT_SECRET_KEY']);
+    $exp = time() + 1*24*60*60;
+    quit(json_encode([
+      "message"=>"Correct password",
+      "token" => $jwtCtrl->encode([
+        "id"=>$result['id'],
+        "username"=>$result['username'],
+        "exp"=> $exp,
+      ])]), 200);
+    
   }
   catch(mysqli_sql_exception $e){
     $message = $e->getMessage();
-    // duplicate entry
-    if ($e->getCode() === 1062){  
-      $split = explode(" ", $e->getMessage());
-      $column = end($split);
-      switch ($column){
-        case "'users.username'":
-          $message = "This username is already taken";
-          break;
-        case "'users.email'":
-          $message = "This email is already taken";
-          break;
-      }
-      
-    }
+    
     quit(json_encode(array(
       "message" => $message,
     )), 400);
