@@ -13,6 +13,8 @@ class EditingPage{
       <canvas id="editing-canvas"></canvas>
       <div class="output">
         <img id="editing-photo" src="" alt="The screen capture will appear in this box." />
+        <button id="save-photo-button">Save</button>
+      
       </div>
     </div>
   </div>`;
@@ -27,6 +29,7 @@ class EditingPage{
   photo;
   captureButton;
   permsisionButton;
+  saveButton;
   
   constructor(){
     history.replaceState("","","https://localhost:833/editing")
@@ -37,6 +40,7 @@ class EditingPage{
     this.photo = document.getElementById("editing-photo");
     this.captureButton = document.getElementById("editing-capture");
     this.permsisionButton = document.getElementById("editing-permissions-button");
+    this.saveButton = document.getElementById("save-photo-button");
     
     this.video.addEventListener("canplay", ()=>{
       if (!this.streaming) {
@@ -93,6 +97,14 @@ class EditingPage{
         console.error(`An error occurred: ${err}`);
       });
     }); 
+    
+    this.saveButton.addEventListener("click", ()=>{
+      fetch(this.photo.src).then(res => res.blob()).then(blob => {
+        const file = new File([blob], 'dot.png', blob)
+        userService.uploadPicture(file);
+        // console.log(file)
+      })
+    })
   }
 }
 
