@@ -13,18 +13,22 @@
 	<script src="/js/services/auth_service.js"></script>
 	<script src="/js/services/user_service.js"></script>
 	<script id="script" src="/js/app.js"></script>
-	<nav id="navbar">
-    <a onclick="load('/')">Home</a>
+	<header id="navbar">
+    <a onclick="load('/')" class="clickable">Home</a>
     <div style="flex: 1;"></div>
     <div id="log-buttons">
-      <a class="log-buttons-unlogged" onclick="load('/login')">Login</a>
+      <a class="log-buttons-unlogged clickable" onclick="load('/login')">Login</a>
       <div class="log-buttons-unlogged separator"></div>
-      <a class="log-buttons-unlogged" onclick="load('/sign-in')">Sign-in</a>
-      <a class="log-buttons-logged" onclick="authService.logout()">Log out</a>
+      <a class="log-buttons-unlogged clickable" onclick="load('/sign-in')">Sign-in</a>
+      <a class="log-buttons-logged clickable" onclick="authService.logout()">Log out</a>
     </div>
-    
-	</nav>
-  <div id="container"></div>
+	</header>
+  <main id="container"></main>
+	<footer id="footer">
+    <a>This a 42 project.</a>
+    <div style="flex: 1;"></div>
+    <a href="https://github.com/llevasse/camagru" class="clickable" >github</a>
+	</footer>
 </body>
 
 </html>
