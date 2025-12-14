@@ -1,3 +1,47 @@
 #editing-canvas{
   display: none;
 }
+
+#editing-container{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+#editing-container>div{
+  flex: 1;
+}
+
+#editing-main-div{
+  display: flex;
+  flex-direction: column;
+}
+
+#editing-video{
+  width: 100%;
+  object-position: center;
+}
+
+#editing-video-buttons-container{
+  display: flex;
+  flex-direction: column;
+  
+}
+
+#editing-side-div{
+  display: flex;
+  flex-direction: column;
+}
+
+#editing-side-div .output{
+    align-self: center;
+    flex: 1;
+    display: block;
+    /* align-content: center; */
+    width: 100%;
+    
+    img{
+      max-width: 100%;
+      width: 100%;
+    }
+}

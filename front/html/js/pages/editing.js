@@ -1,20 +1,24 @@
 class EditingPage{
   body = `
   <link id="style" rel="stylesheet" href="/css/editing-page.css">
-      <button id="editing-permissions-button">Allow webcam capture</button>  
-      <div id="editing-main-div">
-        <video id="editing-video">Webcam available.</video>
+  <div id="editing-container">
+    <div id="editing-main-div">
+      <video id="editing-video"></video>
+      <div id="editing-video-buttons-container">
+        <button id="editing-permissions-button">Allow webcam capture</button>  
         <button id="editing-capture">Capture photo</button>
       </div>
+    </div>
+    <div id="editing-side-div">
       <canvas id="editing-canvas"></canvas>
       <div class="output">
         <img id="editing-photo" src="" alt="The screen capture will appear in this box." />
       </div>
-    <div id="editing-side-div"></div>
-  `;
+    </div>
+  </div>`;
   
-  width = 320;
-  height = 0;
+  width = "100%";
+  height = "100%";
   
   streaming = false;
   
@@ -36,22 +40,26 @@ class EditingPage{
     
     this.video.addEventListener("canplay", ()=>{
       if (!this.streaming) {
-        this.height = this.video.videoHeight / (this.video.videoWidth / this.width);
-    
-        this.video.setAttribute("width", this.width);
-        this.video.setAttribute("height", this.height);
-        this.canvas.setAttribute("width", this.width);
-        this.canvas.setAttribute("height", this.height);
+        this.height = this.video.videoHeight / (this.video.videoWidth) * 100;
+        // this.video.setAttribute("width", this.width);
+        // this.video.setAttribute("height", `${this.height}%`);
+        this.canvas.setAttribute("width", this.video.videoWidth);
+        this.canvas.setAttribute("height", this.video.videoHeight);
         this.streaming = true;
       }
     });
     
     this.captureButton.addEventListener("click", (ev)=>{
       const context = this.canvas.getContext("2d");
-      if (this.width && this.height) {
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
-        context.drawImage(this.video, 0, 0, this.width, this.height);
+      const videoSize = this.video.getBoundingClientRect();
+      // const width = this.video.videoWidth;
+      // const height = this.video.videoHeight;
+      const width = videoSize.width;
+      const height = videoSize.height;
+      if (width && height) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+        context.drawImage(this.video, 0, 0, width, height);
   
         const data = this.canvas.toDataURL("image/png");
         this.photo.setAttribute("src", data);
