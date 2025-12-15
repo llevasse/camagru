@@ -8,7 +8,9 @@ class UserService{
     }).then(async (value)=>{
       if (value.ok){
         return await value.json().then((obj)=>{
-          return (new User(obj['id'], obj['username'], obj['email']));
+          if (obj)
+            return (new User(obj['id'], obj['username'], obj['email']));
+          return null;
         })
       }
       return null;

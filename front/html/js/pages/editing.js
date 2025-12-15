@@ -72,6 +72,8 @@ class EditingPage{
     history.replaceState("","","https://localhost:833/editing")
     document.getElementById("container").innerHTML = this.body;
     
+    fetch("https://localhost:833/get_superposable_images.php");
+    
     this.video = document.getElementById("editing-video");
     this.editingImg = document.getElementById("editing-video-img");
     this.canvas = document.getElementById("editing-canvas");

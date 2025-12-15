@@ -34,8 +34,10 @@ CREATE TABLE comments (
 
 CREATE TABLE superposable_images (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
   file_path VARCHAR(255) NOT NULL,
-  uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+INSERT INTO superposable_images (file_path) VALUES
+  ('/superposables/Cookie.webp'),
+  ('/superposables/CyanParrot.webp');
