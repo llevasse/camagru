@@ -1,43 +1,92 @@
 <?php
-  print_r($_FILES);
-  $target_dir = "/var/www/pictures/";
-  $target_file = $target_dir . basename($_FILES["photo"]["name"]);
-  $uploadOk = 1;
-  $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-  // Check if image file is a actual image or fake image  
-
-  if(isset($_FILES['photo'])) {
-    $filepath = $_FILES['photo']['tmp_name'];
-    $fileSize = filesize($filepath);
-    $fileinfo = finfo_open(FILEINFO_MIME_TYPE);
-    $filetype = finfo_file($fileinfo, $filepath);
-    
-    if ($fileSize === 0) {
-        die("The file is empty.");
-    }
-
-    if ($fileSize > 3145728) { // 3 MB (1 byte * 1024 * 1024 * 3 (for 3 MB))
-        die("The file is too large");
-    }
-
-    $allowedTypes = [
-      'image/png' => 'png',
-      'image/jpeg' => 'jpg'
-    ];
-    
-    if (!in_array($filetype, array_keys($allowedTypes))) {
-      die("File not allowed.");
-    }
-
-    $filename = time() . rand(0, 42024); // I'm using the original name here, but you can also change the name of the file here
-    $extension = $allowedTypes[$filetype];
-    $targetDirectory = "/var/www/pictures/pictures";
-
-    $newFilepath = $targetDirectory . "/" . $filename . "." . $extension;
-
-    if (!copy($filepath, $newFilepath)) { // Copy the file, returns false if failed
-      die("Can't move file.");
-    }
-    unlink($filepath); // Delete the temp file
+  include_once("utils/get_info_from_token.php");
+  include_once("exceptions/token_expired.php");
+  function quit($json, $response_code = 200) {
+    ob_clean();
+    http_response_code($response_code);
+    die($json);
   }
+  
+  function upload_file(){  
+    if(isset($_FILES['photo'])) {
+      $filepath = $_FILES['photo']['tmp_name'];
+      $fileSize = filesize($filepath);
+      $fileinfo = finfo_open(FILEINFO_MIME_TYPE);
+      $filetype = finfo_file($fileinfo, $filepath);
+      
+      if ($fileSize === 0) {
+        quit(json_encode(["message"=>"The file is empty."]), 400);
+      }
+  
+      if ($fileSize > 3145728) { // 3 MB (1 byte * 1024 * 1024 * 3 (for 3 MB))
+        quit(json_encode(["message"=>"The file is too large."]), 400);
+      }
+  
+      $allowedTypes = [
+        'image/png' => 'png',
+        'image/jpeg' => 'jpg'
+      ];
+      
+      if (!in_array($filetype, array_keys($allowedTypes))) {
+        quit(json_encode(["message"=>"The file extension is not allowed."]), 400);
+      }
+  
+      $filename = time() . rand(0, 42024);
+      $extension = $allowedTypes[$filetype];
+      $targetDirectory = "/var/www/pictures/pictures";
+      $relativeTargetDirectory = "pictures";
+  
+      $newFilepath = $targetDirectory . "/" . $filename . "." . $extension;
+      $relativeFilepath = $relativeTargetDirectory . "/" . $filename . "." . $extension;
+  
+      if (!copy($filepath, $newFilepath)) {
+        quit(json_encode(["message"=>"Can't move file."]), 400);
+      }
+      unlink($filepath); // Delete the temp file
+      return $relativeFilepath;
+    }
+  }
+  
+  
+  try{
+    ob_start();
+
+    $info = get_info_from_token();
+    
+    $filepath = upload_file();
+    
+    $db_password = ($_ENV['DB_PASSWORD']);
+    $db_user = ($_ENV['DB_USER']);
+    $db_host = ($_ENV['DB_HOST']);
+    
+    $conn = mysqli_connect($db_host, $db_user, $db_password);
+  
+    if ($conn->connect_error) {
+      quit(json_encode(array("message"=> "Connection failed: " . $conn->connect_error)), 400);
+    } 
+    
+    $sql = "INSERT INTO camagru.pictures (user_id, file_path) VALUES (?, ?)";
+    $stmt = $conn->prepare($sql);
+    if ($stmt->bind_param("is", $info['id'], $filepath) === false) {
+      quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);
+    }
+    if ($stmt->execute() === false) {
+      quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
+    }
+    quit(json_encode(["message"=>"Image stored successfully"]), 200);
+    
+  }
+  catch(TokenExpired $e){
+    quit(json_encode(["message"=> "Token expired"]), 400);
+  }
+  catch(mysqli_sql_exception $e){
+    $message = $e->getMessage();
+    
+    quit(json_encode(array(
+      "message" => $message,
+    )), 400);
+  }
+  catch(Exception $e) {
+    quit(json_encode(["message"=> $e->getMessage()]), 400);
+  } 
 ?>

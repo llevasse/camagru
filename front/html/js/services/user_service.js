@@ -16,6 +16,10 @@ class UserService{
   }
   
   async uploadPicture(photo){
+    if (localStorage.getItem('token') == null){
+      console.error("Need to be logged to upload pictures");
+      return ;
+    }
     const form = new FormData();
     form.append('photo', photo);
     return fetch(`https://localhost:833/upload_file.php`, {
