@@ -45,3 +45,19 @@
       width: 100%;
     }
 }
+#editing-video-img, #editing-video{
+  display: none;
+}
+
+#editing-video-img, #editing-video, #editing-photo{
+  max-height: 50dvh;
+  object-fit: contain;
+}
+
+#editing-video-img.active{
+  display: block;
+}
+
+#editing-video.active{
+  display: block;
+}
