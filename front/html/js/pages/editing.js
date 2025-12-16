@@ -1,15 +1,86 @@
 class SuperposableImage{
-  body = `
-  <div class="superposableImageImgContainer">
+  body = `<div class="superposableImageImgContainer">
     <img class="superposableImageImg" src="{IMG_SRC}">
   </div>`;
   
+  xPositionPercent = .2;
+  yPositionPercent = .2;
+  
+  move = false;
+  begPosition;
+  newPosition;
+  index = null;
+  
+  editingVideoContainer;
+  
+  element; 
+  
   constructor(img_url){
     this.body = this.body.replace("{IMG_SRC}", img_url);
+    this.element = document.createElement("div");
+    this.element.draggable = false;
+    this.element.classList.add("superposableImageImgContainer");
+    this.element.appendChild(document.createElement("img"));
+    this.element.lastChild.classList.add("superposableImageImg")
+    this.element.lastChild.src = img_url;
+    this.element.lastChild.draggable = false;
+    this.editingVideoContainer = document.querySelector("#editing-video-container");
+    this.element.addEventListener("click", ()=>{
+      this.onClick();
+    })
   }
   
   getAsHtmlTag(){
     // document.createElement()
+  }
+  
+  positionFromPointerEvent(ev){
+    return {clientX : ev.clientX, clientY : ev.clientY, offsetX : ev.offsetX, offsetY : ev.offsetY};
+  }
+  
+  onClick(){
+    console.log(this.element);
+    let clone = this.element.cloneNode(true);
+    this.index = this.editingVideoContainer.children.length;
+    clone.classList.add("layered");
+    
+    var videoDimension = document.getElementById("editing-video").getBoundingClientRect();
+    const defaultSpawnXPositionPercent = .20;
+    const defaultSpawnYPositionPercent = .20;
+                  
+                  
+    var layerX = videoDimension.x + (videoDimension.width * defaultSpawnXPositionPercent);
+    var layerY = videoDimension.y + (videoDimension.height * defaultSpawnYPositionPercent);
+    
+    clone.style.left = `${layerX}px`;
+    clone.style.top = `${layerY}px`;
+    
+    clone.addEventListener("pointerdown", (ev)=>{
+      this.move = true;
+      this.begPosition = this.positionFromPointerEvent(ev);
+    });
+    
+        
+    clone.addEventListener("pointerup", (ev)=>{
+      this.move = false;
+    })
+    
+    
+    clone.addEventListener("pointermove", (ev)=>{
+      if (this.move){
+        this.newPosition = this.positionFromPointerEvent(ev);   
+        if (this.index != null){
+          var el = this.editingVideoContainer.children[this.index];
+          const pos = el.getBoundingClientRect();
+          el.style.left = `${pos.x + this.newPosition.offsetX - this.begPosition.offsetX}px`;
+          el.style.top = `${pos.y + this.newPosition.offsetY - this.begPosition.offsetY}px`;
+        }
+      }
+    })
+    
+    onpointerdown=""
+    
+    this.editingVideoContainer.appendChild(clone);
   }
 }
 
@@ -18,7 +89,9 @@ class EditingPage{
   <link id="style" rel="stylesheet" href="/css/editing-page.css">
   <div id="editing-container">
     <div id="editing-main-div">
-      <video id="editing-video"></video>
+      <div id="editing-video-container">
+        <video id="editing-video"></video>
+      </div>
       <img id="editing-video-img"></img>
       <div id="editing-video-buttons-container">
         <button id="editing-permissions-button">Allow webcam capture</button>  
@@ -155,6 +228,21 @@ class EditingPage{
     })
   }
   
+  addSuperposableImages(){
+    editingService.getSuperposableImages().then(async (response)=>{
+      if (response && response.ok){
+        await response.json().then((obj)=>{
+          Array.from(obj).forEach((value)=>{
+            var img = new SuperposableImage(value['file_path']);
+            this.superposableImagesContainer.appendChild(img.element);
+          })
+          return obj;
+        })
+      }
+      return null;
+    })
+  }
+  
   constructor(){
     history.replaceState("","","https://localhost:833/editing")
     document.getElementById("container").innerHTML = this.body;
@@ -178,20 +266,11 @@ class EditingPage{
        
     this.permsisionButton.addEventListener("click", ()=>{this.permsisionButtonClickEvent()});
     
-    this.saveButton.addEventListener("click", ()=>{this.saveButtonClickEvent()});
+    this.saveButton.addEventListener("click", ()=>{this.saveButtonClickEvent()});   
     
-    editingService.getSuperposableImages().then(async (response)=>{
-      if (response && response.ok){
-        await response.json().then((obj)=>{
-          Array.from(obj).forEach((value)=>{
-            var img = new SuperposableImage(value['file_path']);
-            this.superposableImagesContainer.innerHTML = this.superposableImagesContainer.innerHTML + img.body
-          })
-          return obj;
-        })
-      }
-      return null;
-    })
+    this.addSuperposableImages();
+    
+    this.permsisionButtonClickEvent();
   }
 }
 

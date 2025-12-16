@@ -1,3 +1,7 @@
+:root{
+  --superposable-size : 10dvh;
+}
+
 #editing-canvas{
   display: none;
 }
@@ -21,6 +25,12 @@
   width: 100%;
   object-position: center;
 }
+
+#editing-video-container{
+  width: fit-content;
+  align-self: center;
+}
+
 
 #editing-video-buttons-container{
   display: flex;
@@ -69,7 +79,11 @@
 
 .superposableImageImgContainer, .superposableImageImg{
   display: block;
-  height: 25dvh;
-  width: 25dvh;
+  height: var(--superposable-size);
+  width: var(--superposable-size);
   object-fit: contain;
+}
+
+.superposableImageImgContainer.layered{
+  position: absolute;
 }
