@@ -39,5 +39,5 @@ CREATE TABLE superposable_images (
 );
 
 INSERT INTO superposable_images (file_path) VALUES
-  ('/superposables/Cookie.webp'),
-  ('/superposables/CyanParrot.webp');
+  ('/superposables/Cookie.png'),
+  ('/superposables/CyanParrot.png');

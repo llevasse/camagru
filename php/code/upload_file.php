@@ -2,78 +2,98 @@
   include_once("utils/get_info_from_token.php");
   include_once("exceptions/token_expired.php");
   function quit($json, $response_code = 200) {
-    ob_clean();
+    // ob_clean();
     http_response_code($response_code);
     die($json);
   }
   
   function upload_file(){  
-    if(isset($_FILES['photo'])) {
-      $filepath = $_FILES['photo']['tmp_name'];
-      $fileSize = filesize($filepath);
-      $fileinfo = finfo_open(FILEINFO_MIME_TYPE);
-      $filetype = finfo_file($fileinfo, $filepath);
-      
-      if ($fileSize === 0) {
-        quit(json_encode(["message"=>"The file is empty."]), 400);
+    
+    $filepath = $_FILES['photo']['tmp_name'];
+    $fileSize = filesize($filepath);
+    $fileinfo = finfo_open(FILEINFO_MIME_TYPE);
+    $filetype = finfo_file($fileinfo, $filepath);
+    
+    if ($fileSize === 0) {
+      quit(json_encode(["message"=>"The file is empty."]), 400);
+    }
+
+    if ($fileSize > 3145728) { // 3 MB (1 byte * 1024 * 1024 * 3 (for 3 MB))
+      quit(json_encode(["message"=>"The file is too large."]), 400);
+    }
+
+    $allowedTypes = [
+      'image/png' => 'png',
+      'image/jpeg' => 'jpg'
+    ];
+    
+    if (!in_array($filetype, array_keys($allowedTypes))) {
+      quit(json_encode(["message"=>"The file extension is not allowed."]), 400);
+    }
+
+    $filename = time() . rand(0, 42024);
+    $extension = $allowedTypes[$filetype];
+    $targetDirectory = "/var/www/pictures/pictures";
+    $relativeTargetDirectory = "pictures";
+
+    $newFilepath = $targetDirectory . "/" . $filename . "." . $extension;
+    $relativeFilepath = $relativeTargetDirectory . "/" . $filename . "." . $extension;
+
+    if (!copy($filepath, $newFilepath)) {
+      quit(json_encode(["message"=>"Can't move file."]), 400);
+    }
+    unlink($filepath); // Delete the temp file
+    return $relativeFilepath;
+  }
+  
+  function mergeFileAndSuperposables($filepath){
+    try{
+      $superposables = $_POST["superposables"];
+      $dest = imagecreatefrompng("/var/www/pictures/$filepath");
+      foreach (json_decode($superposables, true) as $key => $value) {
+        $src = imagecreatefrompng("/var/www/pictures".$value['src']);
+        imagecopy($dest, $src, $value['x'], $value['y'], 0, 0, 0, 0);
       }
-  
-      if ($fileSize > 3145728) { // 3 MB (1 byte * 1024 * 1024 * 3 (for 3 MB))
-        quit(json_encode(["message"=>"The file is too large."]), 400);
-      }
-  
-      $allowedTypes = [
-        'image/png' => 'png',
-        'image/jpeg' => 'jpg'
-      ];
-      
-      if (!in_array($filetype, array_keys($allowedTypes))) {
-        quit(json_encode(["message"=>"The file extension is not allowed."]), 400);
-      }
-  
-      $filename = time() . rand(0, 42024);
-      $extension = $allowedTypes[$filetype];
-      $targetDirectory = "/var/www/pictures/pictures";
-      $relativeTargetDirectory = "pictures";
-  
-      $newFilepath = $targetDirectory . "/" . $filename . "." . $extension;
-      $relativeFilepath = $relativeTargetDirectory . "/" . $filename . "." . $extension;
-  
-      if (!copy($filepath, $newFilepath)) {
-        quit(json_encode(["message"=>"Can't move file."]), 400);
-      }
-      unlink($filepath); // Delete the temp file
-      return $relativeFilepath;
+      header('Content-Type: image/png');
+      imagepng($dest, "/var/www/pictures/$filepath");
+    }
+    catch(Exception $e){
+      throw $e;
     }
   }
   
-  
   try{
     ob_start();
-
-    $info = get_info_from_token();
+    if(isset($_FILES['photo']) && isset($_POST['superposables'])) {
+      $info = get_info_from_token();
+      
+      $filepath = upload_file();
+      mergeFileAndSuperposables($filepath);  
+      
+      
+      $db_password = ($_ENV['DB_PASSWORD']);
+      $db_user = ($_ENV['DB_USER']);
+      $db_host = ($_ENV['DB_HOST']);
+      
+      $conn = mysqli_connect($db_host, $db_user, $db_password);
     
-    $filepath = upload_file();
-    
-    $db_password = ($_ENV['DB_PASSWORD']);
-    $db_user = ($_ENV['DB_USER']);
-    $db_host = ($_ENV['DB_HOST']);
-    
-    $conn = mysqli_connect($db_host, $db_user, $db_password);
-  
-    if ($conn->connect_error) {
-      quit(json_encode(array("message"=> "Connection failed: " . $conn->connect_error)), 400);
-    } 
-    
-    $sql = "INSERT INTO camagru.pictures (user_id, file_path) VALUES (?, ?)";
-    $stmt = $conn->prepare($sql);
-    if ($stmt->bind_param("is", $info['id'], $filepath) === false) {
-      quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);
+      if ($conn->connect_error) {
+        quit(json_encode(array("message"=> "Connection failed: " . $conn->connect_error)), 400);
+      } 
+      
+      $sql = "INSERT INTO camagru.pictures (user_id, file_path) VALUES (?, ?)";
+      $stmt = $conn->prepare($sql);
+      if ($stmt->bind_param("is", $info['id'], $filepath) === false) {
+        quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);
+      }
+      if ($stmt->execute() === false) {
+        quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
+      }
+      quit(json_encode(["message"=>"Image stored successfully"]), 200);
     }
-    if ($stmt->execute() === false) {
-      quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
+    else{
+      throw new Exception("photo or superposables missing");
     }
-    quit(json_encode(["message"=>"Image stored successfully"]), 200);
     
   }
   catch(TokenExpired $e){
