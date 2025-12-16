@@ -16,20 +16,4 @@ class UserService{
       return null;
     });
   }
-  
-  async uploadPicture(photo){
-    if (localStorage.getItem('token') == null){
-      console.error("Need to be logged to upload pictures");
-      return ;
-    }
-    const form = new FormData();
-    form.append('photo', photo);
-    return fetch(`https://localhost:833/upload_file.php`, {
-      method: 'POST',
-      headers : {
-        "Authorization":"Bearer " + localStorage.getItem('token'),
-      },
-      body: form,
-    })
-  }
 }

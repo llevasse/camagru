@@ -7,6 +7,7 @@ const routes = {
 
 const authService = new AuthService();
 const userService = new UserService();
+const editingService = new EditingService();
 
 var userClient = null;
 

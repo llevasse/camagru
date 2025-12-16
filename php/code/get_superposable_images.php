@@ -23,7 +23,7 @@
       quit(json_encode(array("message"=> "Connection failed: " . $conn->connect_error)), 400);
     } 
     
-    $sql = "SELECT * FROM camagru.superposable_images";
+    $sql = "SELECT id, file_path FROM camagru.superposable_images";
     $result = mysqli_query($conn, $sql);
     if ($result && $result->num_rows > 0) {
       while($row = mysqli_fetch_assoc($result)) {
@@ -45,5 +45,5 @@
   }
   catch(Exception $e) {
     quit(json_encode(["message"=> $e->getMessage()]), 400);
-  } 
+  }
 ?>

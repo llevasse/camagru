@@ -61,3 +61,15 @@
 #editing-video.active{
   display: block;
 }
+
+#superposableImageImgContainer{
+  display: flex;
+  flex-direction: row;
+}
+
+.superposableImageImgContainer, .superposableImageImg{
+  display: block;
+  height: 25dvh;
+  width: 25dvh;
+  object-fit: contain;
+}
