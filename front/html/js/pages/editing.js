@@ -30,10 +30,6 @@ class SuperposableImage{
     })
   }
   
-  getAsHtmlTag(){
-    // document.createElement()
-  }
-  
   positionFromPointerEvent(ev){
     return {clientX : ev.clientX, clientY : ev.clientY, offsetX : ev.offsetX, offsetY : ev.offsetY};
   }
@@ -236,18 +232,22 @@ class EditingPage{
     fetch(this.photo.src).then(res => res.blob()).then(blob => {
       var superposables = {};
       var index = 0;
+      var videoSize = this.video.getBoundingClientRect();
       document.querySelectorAll(".superposableImageImgContainer.layered").forEach((element)=>{
-        var x = element.getBoundingClientRect().left - this.video.getBoundingClientRect().left;
-        var y = element.getBoundingClientRect().top - this.video.getBoundingClientRect().top;
+        var size = element.getBoundingClientRect();
+        var x = size.left - videoSize.left;
+        var y = size.top - videoSize.top;
         var src = (new URL(element.firstChild.src)).pathname;
         index++;
-        superposables[index] = {x:x, y:y, src:src};
+        superposables[index] = {x:x, y:y, width: size.width, height: size.height, src:src};
       });
+      
+      var imgSize = {width: videoSize.width, height: videoSize.height};
       
       console.log(superposables);
       
       const file = new File([blob], 'dot.png', blob)
-      editingService.uploadPicture(file, JSON.stringify(superposables));
+      editingService.uploadPicture(file, JSON.stringify(superposables), JSON.stringify(imgSize));
       // console.log(file)
     })
   }

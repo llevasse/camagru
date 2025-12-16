@@ -50,11 +50,18 @@
     try{
       $superposables = $_POST["superposables"];
       $dest = imagecreatefrompng("/var/www/pictures/$filepath");
+      $size = json_decode($_POST['imgSize']);
+      $width = $size->width;
+      $height = $size->height;
+      
+      $dest = imagescale($dest, $width, $height);
       foreach (json_decode($superposables, true) as $key => $value) {
         $src = imagecreatefrompng("/var/www/pictures".$value['src']);
-        imagecopy($dest, $src, $value['x'], $value['y'], 0, 0, 0, 0);
+        $src = imagescale($src, $value['width'], $value['height']);
+        imagecopy($dest, $src, $value['x'], $value['y'], 0, 0, $value['width'], imagesy( $src ) );
+        
       }
-      header('Content-Type: image/png');
+      // header('Content-Type: image/png');
       imagepng($dest, "/var/www/pictures/$filepath");
     }
     catch(Exception $e){
@@ -64,7 +71,7 @@
   
   try{
     ob_start();
-    if(isset($_FILES['photo']) && isset($_POST['superposables'])) {
+    if(isset($_FILES['photo']) && isset($_POST['superposables'])  && isset($_POST['imgSize'])) {
       $info = get_info_from_token();
       
       $filepath = upload_file();

@@ -1,5 +1,5 @@
 class EditingService{
-  async uploadPicture(photo, superposables){
+  async uploadPicture(photo, superposables, imgSize){
     if (localStorage.getItem('token') == null){
       console.error("Need to be logged to upload pictures");
       return null;
@@ -7,6 +7,7 @@ class EditingService{
     const form = new FormData();
     form.append('photo', photo);
     form.append('superposables', superposables);
+    form.append('imgSize', imgSize);
     return fetch(`https://localhost:833/upload_file.php`, {
       method: 'POST',
       headers : {
