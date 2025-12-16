@@ -174,7 +174,7 @@ class EditingPage{
     }
   }
   
-  captureButtonClickEvent(ev){
+  captureButtonClickEvent(){
     const context = this.canvas.getContext("2d");
     const captureSize = this.focusSource.getBoundingClientRect();
     const width = captureSize.width;
@@ -195,7 +195,6 @@ class EditingPage{
       const data = this.canvas.toDataURL("image/png");
       this.photo.setAttribute("src", data);
     }
-    ev.preventDefault();
   }
   
   permsisionButtonClickEvent(){
@@ -223,7 +222,7 @@ class EditingPage{
   saveButtonClickEvent(){
     fetch(this.photo.src).then(res => res.blob()).then(blob => {
       const file = new File([blob], 'dot.png', blob)
-      userService.uploadPicture(file);
+      editingService.uploadPicture(file);
       // console.log(file)
     })
   }
