@@ -40,13 +40,13 @@ class SuperposableImage{
     this.index = this.editingVideoContainer.children.length;
     clone.classList.add("layered");
     
-    var videoDimension = document.getElementById("editing-video").getBoundingClientRect();
+    var sourceDimension = document.querySelector(".focusSource").getBoundingClientRect();
     const defaultSpawnXPositionPercent = .20;
     const defaultSpawnYPositionPercent = .20;
                   
                   
-    var layerX = videoDimension.x + (videoDimension.width * defaultSpawnXPositionPercent);
-    var layerY = videoDimension.y + (videoDimension.height * defaultSpawnYPositionPercent);
+    var layerX = sourceDimension.x + (sourceDimension.width * defaultSpawnXPositionPercent);
+    var layerY = sourceDimension.y + (sourceDimension.height * defaultSpawnYPositionPercent);
     
     clone.style.left = `${layerX}px`;
     clone.style.top = `${layerY}px`;
@@ -71,8 +71,8 @@ class SuperposableImage{
           el.style.left = `${pos.x + this.newPosition.offsetX - this.begPosition.offsetX}px`;
           el.style.top = `${pos.y + this.newPosition.offsetY - this.begPosition.offsetY}px`;
           
-          this.xPositionPercent = el.getBoundingClientRect().left / videoDimension.width
-          this.yPositionPercent = el.getBoundingClientRect().top / videoDimension.height
+          this.xPositionPercent = el.getBoundingClientRect().left / sourceDimension.width
+          this.yPositionPercent = el.getBoundingClientRect().top / sourceDimension.height
         }
       }
     })
@@ -80,8 +80,8 @@ class SuperposableImage{
     clone.addEventListener("resize", ()=>{
       var el = this.editingVideoContainer.children[this.index];
                         
-      var layerX = videoDimension.x + (videoDimension.width * this.xPositionPercent);
-      var layerY = videoDimension.y + (videoDimension.height * this.yPositionPercent);
+      var layerX = sourceDimension.x + (sourceDimension.width * this.xPositionPercent);
+      var layerY = sourceDimension.y + (sourceDimension.height * this.yPositionPercent);
       console.log(layerX, layerY);
       el.style.left = `${layerX}px`;
       el.style.top = `${layerY}px`;
@@ -149,6 +149,9 @@ class EditingPage{
   }
   
   setVideoAsSrc(){
+    if (this.focusSource && this.focusSource.classList.contains("focusSource")){
+      this.focusSource.classList.remove("focusSource");
+    }
     if (this.editingImg.classList.contains("active")){
       this.editingImg.classList.remove("active");
     }
@@ -156,8 +159,15 @@ class EditingPage{
       this.video.classList.add("active");
     }
     this.focusSource = this.video;
+    if (!this.focusSource.classList.contains("focusSource")){
+      this.focusSource.classList.add("focusSource");
+    }
+    
   }
   setImgAsSrc(){
+    if (this.focusSource && this.focusSource.classList.contains("focusSource")){
+      this.focusSource.classList.remove("focusSource");
+    }
     if (this.video.classList.contains("active")){
       this.video.classList.remove("active");
     }
@@ -165,6 +175,9 @@ class EditingPage{
       this.editingImg.classList.add("active");
     }
     this.focusSource = this.editingImg;
+    if (!this.focusSource.classList.contains("focusSource")){
+      this.focusSource.classList.add("focusSource");
+    }
   }
   
   uploadButtonChangeEvent(){
@@ -232,17 +245,17 @@ class EditingPage{
     fetch(this.photo.src).then(res => res.blob()).then(blob => {
       var superposables = {};
       var index = 0;
-      var videoSize = this.video.getBoundingClientRect();
+      var sourceSize = this.focusSource.getBoundingClientRect();
       document.querySelectorAll(".superposableImageImgContainer.layered").forEach((element)=>{
         var size = element.getBoundingClientRect();
-        var x = size.left - videoSize.left;
-        var y = size.top - videoSize.top;
+        var x = size.left - sourceSize.left;
+        var y = size.top - sourceSize.top;
         var src = (new URL(element.firstChild.src)).pathname;
         index++;
         superposables[index] = {x:x, y:y, width: size.width, height: size.height, src:src};
       });
       
-      var imgSize = {width: videoSize.width, height: videoSize.height};      
+      var imgSize = {width: sourceSize.width, height: sourceSize.height};      
       const file = new File([blob], 'dot.png', blob)
       editingService.uploadPicture(file, JSON.stringify(superposables), JSON.stringify(imgSize));
       // console.log(file)
