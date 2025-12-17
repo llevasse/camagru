@@ -64,6 +64,10 @@
   object-fit: contain;
 }
 
+#editing-video-img{
+  min-height: 50dvh;
+}
+
 #editing-video-img.active{
   display: block;
 }

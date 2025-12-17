@@ -100,8 +100,8 @@ class EditingPage{
     <div id="editing-main-div">
       <div id="editing-video-container">
         <video id="editing-video"></video>
+        <img id="editing-video-img"></img>
       </div>
-      <img id="editing-video-img"></img>
       <div id="editing-video-buttons-container">
         <button id="editing-permissions-button">Allow webcam capture</button>  
         <button id="editing-capture">Capture photo</button>
@@ -198,11 +198,19 @@ class EditingPage{
   
   captureButtonClickEvent(){
     const context = this.canvas.getContext("2d");
-    const captureSize = this.focusSource.getBoundingClientRect();
-    const width = this.video.videoWidth;
-    const height = this.video.videoHeight;
-    const s = width > height ? height : width;
-    if (s) {
+    let width;
+    let height;
+    if (this.streaming){
+      width = this.video.videoWidth;
+      height = this.video.videoHeight;
+    }
+    else{
+      const captureSize = this.focusSource.getBoundingClientRect();
+      width = captureSize.width;
+      height = captureSize.height;
+    }
+    // const s = width > height ? height : width;
+    if (width && height) {
       this.canvas.width = width;
       this.canvas.height = height;
       context.drawImage(this.focusSource, 0, 0, width, height);
