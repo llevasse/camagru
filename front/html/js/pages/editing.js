@@ -93,6 +93,40 @@ class SuperposableImage{
   }
 }
 
+class EditedImage{
+  baseImage; // {src, width, height}
+  superposableImages;
+  finalImageDataUrl;
+  
+  constructor(baseImage, superposableImages, finalImageDataUrl){
+    this.baseImage = baseImage;
+    this.superposableImages = superposableImages;
+    this.finalImageDataUrl = finalImageDataUrl;
+    this.body
+  }
+  
+  toHtmlElement(){
+    let e = document.createElement("div");
+    e.classList.add("editedImage");
+    let img = document.createElement("img");
+    img.src = this.finalImageDataUrl;
+    e.appendChild(img);
+    let btn = document.createElement("button");
+    btn.innerHTML = "Save";
+    btn.onclick = this.upload();
+    e.appendChild(btn);
+    return e;
+  }
+  
+  upload(){
+    fetch(this.baseImage.src).then(res => res.blob()).then(blob => {      
+      var imgSize = {width: this.baseImage.width, height: this.baseImage.height};      
+      const file = new File([blob], 'dot.png', blob)
+      editingService.uploadPicture(file, JSON.stringify(this.superposableImages), JSON.stringify(imgSize));
+    })
+  }
+}
+
 class EditingPage{
   body = `
   <link id="style" rel="stylesheet" href="/css/editing-page.css">
@@ -112,9 +146,7 @@ class EditingPage{
     </div>
     <div id="editing-side-div">
       <canvas id="editing-canvas"></canvas>
-      <div class="output">
-        <img id="editing-photo" src="" alt="The screen capture will appear in this box." />
-        <button id="save-photo-button">Save</button>
+      <div id="edited-images-output">
       
       </div>
     </div>
@@ -126,7 +158,7 @@ class EditingPage{
   video;
   editingImg;
   canvas;
-  photo;
+  editedImagesContainer;
   captureButton;
   permsisionButton;
   uploadButton;
@@ -137,6 +169,8 @@ class EditingPage{
   superposableImages = [];
   
   superposableImagesContainer;
+  
+  editiedImages = [];
   
   removeStream(){
     if (this.streaming){  // cancel stream
@@ -200,30 +234,50 @@ class EditingPage{
     const context = this.canvas.getContext("2d");
     let width;
     let height;
+    const sourceSize = this.focusSource.getBoundingClientRect();
+    
     if (this.streaming){
       width = this.video.videoWidth;
       height = this.video.videoHeight;
     }
     else{
-      const captureSize = this.focusSource.getBoundingClientRect();
-      width = captureSize.width;
-      height = captureSize.height;
+      width = sourceSize.width;
+      height = sourceSize.height;
     }
     // const s = width > height ? height : width;
     if (width && height) {
       this.canvas.width = width;
       this.canvas.height = height;
       context.drawImage(this.focusSource, 0, 0, width, height);
-
+      const baseImageDataUrl = this.canvas.toDataURL("image/png");
+      
+      var superposables = {};
+      var index = 0;
+      document.querySelectorAll(".superposableImageImgContainer.layered").forEach((element)=>{
+        var size = element.getBoundingClientRect();
+        var x = size.left - sourceSize.left;
+        var y = size.top - sourceSize.top;
+        var src = (new URL(element.firstChild.src)).pathname;
+        superposables[index] = {x:x, y:y, width: size.width, height: size.height, src:src};
+        index++;
+        context.drawImage(element.firstChild, x, y, size.width, size.height);
+      });
       const data = this.canvas.toDataURL("image/png");
-      this.photo.setAttribute("src", data);
+      
+      const editedImage = new EditedImage({src: baseImageDataUrl, width: width, height: height}, superposables, data);
+      
+      this.editiedImages.push(editedImage);
+      
+      this.editedImagesContainer.insertBefore(editedImage.toHtmlElement(), this.editedImagesContainer.firstChild);
+      
+      this.editedImagesContainer.setAttribute("src", data);
     } else { // clear photo;
       const context = this.canvas.getContext("2d");
       context.fillStyle = "#aaaaaa";
       context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-      const data = this.canvas.toDataURL("image/png");
-      this.photo.setAttribute("src", data);
+      // const data = this.canvas.toDataURL("image/png");
+      // this.editedImagesContainer.setAttribute("src", data);
     }
   }
   
@@ -250,7 +304,7 @@ class EditingPage{
   }
   
   saveButtonClickEvent(){
-    fetch(this.photo.src).then(res => res.blob()).then(blob => {
+    fetch(this.editedImagesContainer.src).then(res => res.blob()).then(blob => {
       var superposables = {};
       var index = 0;
       var sourceSize = this.focusSource.getBoundingClientRect();
@@ -259,8 +313,8 @@ class EditingPage{
         var x = size.left - sourceSize.left;
         var y = size.top - sourceSize.top;
         var src = (new URL(element.firstChild.src)).pathname;
-        index++;
         superposables[index] = {x:x, y:y, width: size.width, height: size.height, src:src};
+        index++;
       });
       
       var imgSize = {width: sourceSize.width, height: sourceSize.height};      
@@ -292,7 +346,7 @@ class EditingPage{
     this.video = document.getElementById("editing-video");
     this.editingImg = document.getElementById("editing-video-img");
     this.canvas = document.getElementById("editing-canvas");
-    this.photo = document.getElementById("editing-photo");
+    this.editedImagesContainer = document.getElementById("edited-images-output");
     this.captureButton = document.getElementById("editing-capture");
     this.permsisionButton = document.getElementById("editing-permissions-button");
     this.saveButton = document.getElementById("save-photo-button");
@@ -308,7 +362,7 @@ class EditingPage{
        
     this.permsisionButton.addEventListener("click", ()=>{this.permsisionButtonClickEvent()});
     
-    this.saveButton.addEventListener("click", ()=>{this.saveButtonClickEvent()});   
+    // this.saveButton.addEventListener("click", ()=>{this.saveButtonClickEvent()});   
     
     this.addSuperposableImages();
     

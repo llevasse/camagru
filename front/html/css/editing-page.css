@@ -43,7 +43,7 @@
   flex-direction: column;
 }
 
-#editing-side-div .output{
+#editing-side-div #edited-images-output{
     align-self: center;
     flex: 1;
     display: block;
@@ -53,6 +53,8 @@
     img{
       max-width: 100%;
       width: 100%;
+      max-height: 25dvh;
+      object-fit: contain;
     }
 }
 #editing-video-img, #editing-video{
