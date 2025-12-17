@@ -242,10 +242,7 @@ class EditingPage{
         superposables[index] = {x:x, y:y, width: size.width, height: size.height, src:src};
       });
       
-      var imgSize = {width: videoSize.width, height: videoSize.height};
-      
-      console.log(superposables);
-      
+      var imgSize = {width: videoSize.width, height: videoSize.height};      
       const file = new File([blob], 'dot.png', blob)
       editingService.uploadPicture(file, JSON.stringify(superposables), JSON.stringify(imgSize));
       // console.log(file)

@@ -80,7 +80,7 @@
 .superposableImageImgContainer, .superposableImageImg{
   display: block;
   height: var(--superposable-size);
-  width: var(--superposable-size);
+  /* width: var(--superposable-size); */
   object-fit: contain;
 }
 
