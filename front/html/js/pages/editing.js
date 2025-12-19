@@ -34,8 +34,19 @@ class SuperposableImage{
     return {clientX : ev.clientX, clientY : ev.clientY, offsetX : ev.offsetX, offsetY : ev.offsetY};
   }
   
+  reposition(){
+    var sourceDimension = document.querySelector(".focusSource").getBoundingClientRect();
+    var el = this.editingVideoContainer.children[this.index];
+                        
+    var layerX = sourceDimension.x + (sourceDimension.width * this.xPositionPercent);
+    var layerY = sourceDimension.y + (sourceDimension.height * this.yPositionPercent);
+    console.log(this.xPositionPercent,this.yPositionPercent);
+    console.log(layerX, layerY);
+    el.style.left = `${layerX}px`;
+    el.style.top = `${layerY}px`;
+  }
+  
   onClick(){
-    console.log(this.element);
     let clone = this.element.cloneNode(true);
     this.index = this.editingVideoContainer.children.length;
     clone.classList.add("layered");
@@ -45,11 +56,11 @@ class SuperposableImage{
     const defaultSpawnYPositionPercent = .20;
                   
                   
-    var layerX = sourceDimension.x + (sourceDimension.width * defaultSpawnXPositionPercent);
-    var layerY = sourceDimension.y + (sourceDimension.height * defaultSpawnYPositionPercent);
+    // var layerX = sourceDimension.left + (sourceDimension.width * defaultSpawnXPositionPercent);
+    // var layerY = sourceDimension.top + (sourceDimension.height * defaultSpawnYPositionPercent);
     
-    clone.style.left = `${layerX}px`;
-    clone.style.top = `${layerY}px`;
+    clone.style.left = `${defaultSpawnXPositionPercent * 100}%`;
+    clone.style.top = `${defaultSpawnYPositionPercent * 100}%`;
     
     clone.addEventListener("pointerdown", (ev)=>{
       this.move = true;
@@ -73,23 +84,16 @@ class SuperposableImage{
           
           this.xPositionPercent = el.getBoundingClientRect().left / sourceDimension.width
           this.yPositionPercent = el.getBoundingClientRect().top / sourceDimension.height
+          
+          clone.style.left = `${this.xPositionPercent * 100}%`;
+          clone.style.top = `${this.yPositionPercent * 100}%`;
         }
       }
     })
     
-    clone.addEventListener("resize", ()=>{
-      var el = this.editingVideoContainer.children[this.index];
-                        
-      var layerX = sourceDimension.x + (sourceDimension.width * this.xPositionPercent);
-      var layerY = sourceDimension.y + (sourceDimension.height * this.yPositionPercent);
-      console.log(layerX, layerY);
-      el.style.left = `${layerX}px`;
-      el.style.top = `${layerY}px`;
-    })
-    
     onpointerdown=""
     
-    this.editingVideoContainer.appendChild(clone);
+    document.querySelector("#layered-image-container").appendChild(clone);
   }
 }
 
@@ -135,6 +139,7 @@ class EditingPage{
       <div id="editing-video-container">
         <video id="editing-video"></video>
         <img id="editing-video-img"></img>
+        <div id="layered-image-container"></div>
       </div>
       <div id="editing-video-buttons-container">
         <button id="editing-permissions-button">Allow webcam capture</button>  
@@ -165,11 +170,12 @@ class EditingPage{
   saveButton;
   
   focusSource;
+  focusSourceSize;
   
   superposableImages = [];
   
   superposableImagesContainer;
-  
+  layereImageContainer;
   editiedImages = [];
   
   removeStream(){
@@ -196,6 +202,12 @@ class EditingPage{
     if (!this.focusSource.classList.contains("focusSource")){
       this.focusSource.classList.add("focusSource");
     }
+    this.focusSourceSize = this.focusSource.getBoundingClientRect();
+    
+    this.layereImageContainer.style.top = `${this.focusSourceSize.top}px`;
+    this.layereImageContainer.style.left = `${this.focusSourceSize.left}px`;
+    this.layereImageContainer.style.width = `${this.focusSourceSize.width}px`;
+    this.layereImageContainer.style.height = `${this.focusSourceSize.height}px`;
     
   }
   setImgAsSrc(){
@@ -212,6 +224,11 @@ class EditingPage{
     if (!this.focusSource.classList.contains("focusSource")){
       this.focusSource.classList.add("focusSource");
     }
+    this.focusSourceSize = this.focusSource.getBoundingClientRect();
+    this.layereImageContainer.style.top = `${this.focusSourceSize.top}px`;
+    this.layereImageContainer.style.left = `${this.focusSourceSize.left}px`;
+    this.layereImageContainer.style.width = `${this.focusSourceSize.width}px`;
+    this.layereImageContainer.style.height = `${this.focusSourceSize.height}px`;
   }
   
   uploadButtonChangeEvent(){
@@ -330,6 +347,7 @@ class EditingPage{
         await response.json().then((obj)=>{
           Array.from(obj).forEach((value)=>{
             var img = new SuperposableImage(value['file_path']);
+            this.superposableImages.push(img);
             this.superposableImagesContainer.appendChild(img.element);
           })
           return obj;
@@ -337,6 +355,14 @@ class EditingPage{
       }
       return null;
     })
+  }
+  
+  resizeEvent(ev, images){
+    srcDimention = this.document.querySelector(".focusSource").getBoundingClientRect();
+    document.querySelector("#layered-image-container").style.top = srcDimention.top;
+    document.querySelector("#layered-image-container").style.left = srcDimention.left;
+    document.querySelector("#layered-image-container").style.width = srcDimention.width;
+    document.querySelector("#layered-image-container").style.height = srcDimention.height;
   }
   
   constructor(){
@@ -351,6 +377,7 @@ class EditingPage{
     this.permsisionButton = document.getElementById("editing-permissions-button");
     this.saveButton = document.getElementById("save-photo-button");
     this.uploadButton = document.getElementById("editing-upload-button");
+    this.layereImageContainer = document.querySelector("#layered-image-container");
     
     this.superposableImagesContainer = document.getElementById("superposableImageImgContainer");
     
@@ -367,7 +394,11 @@ class EditingPage{
     this.addSuperposableImages();
     
     this.permsisionButtonClickEvent();
+    
+    
+    window.addEventListener("resize", (ev)=>{ this.resizeEvent(ev, this.superposableImages)});
   }
+  
 }
 
 {

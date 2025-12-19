@@ -93,3 +93,8 @@
 .superposableImageImgContainer.layered{
   position: absolute;
 }
+
+#layered-image-container{
+  position: absolute;
+
+}
