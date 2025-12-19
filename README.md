@@ -26,3 +26,5 @@ Camagru is a post-common-core 42 project. The goal of this project is to create 
 
 # Launching
 `make`
+
+The website is now available on `https://localhost:833/`.
