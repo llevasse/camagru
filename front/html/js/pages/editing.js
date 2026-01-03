@@ -1,7 +1,12 @@
-class SuperposableImage{
+// Layered images displayed over webcam video or user uploaded image
+class SuperposableImageLayered{
   body = `<div class="superposableImageImgContainer">
     <img class="superposableImageImg" src="{IMG_SRC}">
   </div>`;
+  
+  
+  defaultSpawnXPositionPercent = .20;
+  defaultSpawnYPositionPercent = .20;
   
   xPositionPercent = .2;
   yPositionPercent = .2;
@@ -12,8 +17,89 @@ class SuperposableImage{
   index = null;
   
   editingVideoContainer;
+  layeredImageContainer;
   
-  element; 
+  element;
+  
+  constructor(img_url){
+    this.element = document.createElement("div");
+    this.element.draggable = false;
+    this.element.classList.add("superposableImageImgContainer");
+    this.element.classList.add("layered");
+
+    this.element.style.left = `${this.defaultSpawnXPositionPercent * 100}%`;
+    this.element.style.top = `${this.defaultSpawnYPositionPercent * 100}%`;
+    
+    this.element.appendChild(document.createElement("img"));
+    this.element.lastChild.classList.add("superposableImageImg")
+    this.element.lastChild.src = img_url;
+    this.element.lastChild.draggable = false;
+    
+    this.editingVideoContainer = document.querySelector("#editing-video-container");
+    this.layeredImageContainer = document.querySelector("#layered-image-container");
+    
+    var srcDimensions = document.querySelector(".focusSource").getBoundingClientRect();
+    this.layeredImageContainer.style.top = `${srcDimensions.top}px`;
+    this.layeredImageContainer.style.left = `${srcDimensions.left}px`;
+    this.layeredImageContainer.style.width = `${srcDimensions.width}px`;
+    this.layeredImageContainer.style.height = `${srcDimensions.height}px`;
+    
+    this.index = this.layeredImageContainer.children.length;
+    
+    this.element.addEventListener("pointerdown", (ev)=>{this.onpointerdown(ev);})
+    this.element.addEventListener("pointerup", (ev)=>{this.onpointerup(ev);})
+    this.element.addEventListener("pointermove", (ev)=>{this.onpointermove(ev);})    
+  }
+  
+  positionFromPointerEvent(ev){
+    return {clientX : ev.clientX, clientY : ev.clientY,
+            offsetX : ev.offsetX, offsetY : ev.offsetY,
+            movementX: ev.movementX, movementY: ev.movementY,
+            pageX: ev.pageX, pageY: ev.pageY,
+    };
+  }
+  
+  onpointerdown(ev){
+    this.move = true;
+    this.begPosition = this.positionFromPointerEvent(ev);
+  }
+  
+  onpointerup(ev){
+    this.move = false;
+  }
+  
+  onpointermove(ev){
+    if (this.move){
+      this.newPosition = this.positionFromPointerEvent(ev);   
+      if (this.index != null){
+        var elementPos = this.element.getBoundingClientRect();
+        var diff = {offsetX : this.newPosition.offsetX - this.begPosition.offsetX, offsetY : this.newPosition.offsetY - this.begPosition.offsetY};
+        
+        var srcDimensions = document.querySelector(".focusSource").getBoundingClientRect();
+                
+        // get new postion in pixel of image relative to it's parent (#layered-image-container)
+        var left = elementPos.x + (diff.offsetX) - srcDimensions.x;
+        var top  = elementPos.y + (diff.offsetY) - srcDimensions.y;
+
+        this.xPositionPercent = left / srcDimensions.width;
+        this.yPositionPercent = top / srcDimensions.height;
+        
+        this.element.style.left = `${this.xPositionPercent * 100}%`;
+        this.element.style.top = `${this.yPositionPercent * 100}%`;
+      }
+    }
+  }
+}
+
+
+
+// Images displayed in superposable images list
+class SuperposableImageBase{
+  body = `<div class="superposableImageImgContainer">
+    <img class="superposableImageImg" src="{IMG_SRC}">
+  </div>`;  
+  
+  element;
   
   constructor(img_url){
     this.body = this.body.replace("{IMG_SRC}", img_url);
@@ -24,76 +110,10 @@ class SuperposableImage{
     this.element.lastChild.classList.add("superposableImageImg")
     this.element.lastChild.src = img_url;
     this.element.lastChild.draggable = false;
-    this.editingVideoContainer = document.querySelector("#editing-video-container");
     this.element.addEventListener("click", ()=>{
-      this.onClick();
+      let layer = new SuperposableImageLayered(img_url);
+      document.querySelector("#layered-image-container").appendChild(layer.element);
     })
-  }
-  
-  positionFromPointerEvent(ev){
-    return {clientX : ev.clientX, clientY : ev.clientY, offsetX : ev.offsetX, offsetY : ev.offsetY};
-  }
-  
-  reposition(){
-    var sourceDimension = document.querySelector(".focusSource").getBoundingClientRect();
-    var el = this.editingVideoContainer.children[this.index];
-                        
-    var layerX = sourceDimension.x + (sourceDimension.width * this.xPositionPercent);
-    var layerY = sourceDimension.y + (sourceDimension.height * this.yPositionPercent);
-    console.log(this.xPositionPercent,this.yPositionPercent);
-    console.log(layerX, layerY);
-    el.style.left = `${layerX}px`;
-    el.style.top = `${layerY}px`;
-  }
-  
-  onClick(){
-    let clone = this.element.cloneNode(true);
-    this.index = this.editingVideoContainer.children.length;
-    clone.classList.add("layered");
-    
-    var sourceDimension = document.querySelector(".focusSource").getBoundingClientRect();
-    const defaultSpawnXPositionPercent = .20;
-    const defaultSpawnYPositionPercent = .20;
-                  
-                  
-    // var layerX = sourceDimension.left + (sourceDimension.width * defaultSpawnXPositionPercent);
-    // var layerY = sourceDimension.top + (sourceDimension.height * defaultSpawnYPositionPercent);
-    
-    clone.style.left = `${defaultSpawnXPositionPercent * 100}%`;
-    clone.style.top = `${defaultSpawnYPositionPercent * 100}%`;
-    
-    clone.addEventListener("pointerdown", (ev)=>{
-      this.move = true;
-      this.begPosition = this.positionFromPointerEvent(ev);
-    });
-    
-        
-    clone.addEventListener("pointerup", (ev)=>{
-      this.move = false;
-    })
-    
-    
-    clone.addEventListener("pointermove", (ev)=>{
-      if (this.move){
-        this.newPosition = this.positionFromPointerEvent(ev);   
-        if (this.index != null){
-          var el = this.editingVideoContainer.children[this.index];
-          const pos = el.getBoundingClientRect();
-          el.style.left = `${pos.x + this.newPosition.offsetX - this.begPosition.offsetX}px`;
-          el.style.top = `${pos.y + this.newPosition.offsetY - this.begPosition.offsetY}px`;
-          
-          this.xPositionPercent = el.getBoundingClientRect().left / sourceDimension.width
-          this.yPositionPercent = el.getBoundingClientRect().top / sourceDimension.height
-          
-          clone.style.left = `${this.xPositionPercent * 100}%`;
-          clone.style.top = `${this.yPositionPercent * 100}%`;
-        }
-      }
-    })
-    
-    onpointerdown=""
-    
-    document.querySelector("#layered-image-container").appendChild(clone);
   }
 }
 
@@ -171,9 +191,7 @@ class EditingPage{
   
   focusSource;
   focusSourceSize;
-  
-  superposableImages = [];
-  
+    
   superposableImagesContainer;
   layereImageContainer;
   editiedImages = [];
@@ -203,13 +221,9 @@ class EditingPage{
       this.focusSource.classList.add("focusSource");
     }
     this.focusSourceSize = this.focusSource.getBoundingClientRect();
-    
-    this.layereImageContainer.style.top = `${this.focusSourceSize.top}px`;
-    this.layereImageContainer.style.left = `${this.focusSourceSize.left}px`;
-    this.layereImageContainer.style.width = `${this.focusSourceSize.width}px`;
-    this.layereImageContainer.style.height = `${this.focusSourceSize.height}px`;
-    
-  }
+    this.resizeEvent(null, null);
+}
+
   setImgAsSrc(){
     if (this.focusSource && this.focusSource.classList.contains("focusSource")){
       this.focusSource.classList.remove("focusSource");
@@ -225,10 +239,7 @@ class EditingPage{
       this.focusSource.classList.add("focusSource");
     }
     this.focusSourceSize = this.focusSource.getBoundingClientRect();
-    this.layereImageContainer.style.top = `${this.focusSourceSize.top}px`;
-    this.layereImageContainer.style.left = `${this.focusSourceSize.left}px`;
-    this.layereImageContainer.style.width = `${this.focusSourceSize.width}px`;
-    this.layereImageContainer.style.height = `${this.focusSourceSize.height}px`;
+    this.resizeEvent(null, null);
   }
   
   uploadButtonChangeEvent(){
@@ -346,8 +357,7 @@ class EditingPage{
       if (response && response.ok){
         await response.json().then((obj)=>{
           Array.from(obj).forEach((value)=>{
-            var img = new SuperposableImage(value['file_path']);
-            this.superposableImages.push(img);
+            var img = new SuperposableImageBase(value['file_path']);
             this.superposableImagesContainer.appendChild(img.element);
           })
           return obj;
@@ -358,11 +368,12 @@ class EditingPage{
   }
   
   resizeEvent(ev, images){
-    srcDimention = this.document.querySelector(".focusSource").getBoundingClientRect();
-    document.querySelector("#layered-image-container").style.top = srcDimention.top;
-    document.querySelector("#layered-image-container").style.left = srcDimention.left;
-    document.querySelector("#layered-image-container").style.width = srcDimention.width;
-    document.querySelector("#layered-image-container").style.height = srcDimention.height;
+    console.log("resize");
+    var srcDimention = this.focusSource.getBoundingClientRect();
+    document.querySelector("#layered-image-container").style.top = `${srcDimention.top}px`;
+    document.querySelector("#layered-image-container").style.left = `${srcDimention.left}px`;
+    document.querySelector("#layered-image-container").style.width = `${srcDimention.width}px`;
+    document.querySelector("#layered-image-container").style.height = `${srcDimention.height}px`;
   }
   
   constructor(){
@@ -395,7 +406,8 @@ class EditingPage{
     
     this.permsisionButtonClickEvent();
     
-    
+    // this.layereImageContainer.addEventListener("pointerdown",(ev)=>{console.log(ev)});
+        
     window.addEventListener("resize", (ev)=>{ this.resizeEvent(ev, this.superposableImages)});
   }
   

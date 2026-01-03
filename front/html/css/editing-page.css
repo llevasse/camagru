@@ -90,6 +90,14 @@
   object-fit: contain;
 }
 
+.layered{
+  user-select: none;
+}
+
+.layered .superposableImageImg{
+  pointer-events: none;
+}
+
 .superposableImageImgContainer.layered{
   position: absolute;
 }
