@@ -8,6 +8,9 @@ class SuperposableImageLayered{
   defaultSpawnXPositionPercent = .20;
   defaultSpawnYPositionPercent = .20;
   
+  widthInPercent;
+  heightInPercent;
+  
   xPositionPercent = .2;
   yPositionPercent = .2;
   
@@ -22,6 +25,10 @@ class SuperposableImageLayered{
   element;
   
   constructor(img_url){
+    this.editingVideoContainer = document.querySelector("#editing-video-container");
+    this.layeredImageContainer = document.querySelector("#layered-image-container");
+    const srcDimensions = document.querySelector(".focusSource").getBoundingClientRect();
+    
     this.element = document.createElement("div");
     this.element.draggable = false;
     this.element.classList.add("superposableImageImgContainer");
@@ -30,15 +37,15 @@ class SuperposableImageLayered{
     this.element.style.left = `${this.defaultSpawnXPositionPercent * 100}%`;
     this.element.style.top = `${this.defaultSpawnYPositionPercent * 100}%`;
     
-    this.element.appendChild(document.createElement("img"));
-    this.element.lastChild.classList.add("superposableImageImg")
-    this.element.lastChild.src = img_url;
-    this.element.lastChild.draggable = false;
+    const img = new Image();
+    img.onload = (ev)=>{this.initImgSizeInPercent()};
+    img.src = img_url;
+    img.classList.add("superposableImageImg");
+    img.draggable = false;
     
-    this.editingVideoContainer = document.querySelector("#editing-video-container");
-    this.layeredImageContainer = document.querySelector("#layered-image-container");
+    this.element.appendChild(img);
     
-    var srcDimensions = document.querySelector(".focusSource").getBoundingClientRect();
+    
     this.layeredImageContainer.style.top = `${srcDimensions.top}px`;
     this.layeredImageContainer.style.left = `${srcDimensions.left}px`;
     this.layeredImageContainer.style.width = `${srcDimensions.width}px`;
@@ -49,6 +56,16 @@ class SuperposableImageLayered{
     this.element.addEventListener("pointerdown", (ev)=>{this.onpointerdown(ev);})
     this.element.addEventListener("pointerup", (ev)=>{this.onpointerup(ev);})
     this.element.addEventListener("pointermove", (ev)=>{this.onpointermove(ev);})    
+  }
+  
+  // Needs to be called after img has been added to DOM
+  initImgSizeInPercent(){
+    const imgDimensions = this.element.lastChild.getBoundingClientRect();
+    const srcDimensions = document.querySelector(".focusSource").getBoundingClientRect();
+    this.widthInPercent = imgDimensions.width /  srcDimensions.width;
+    this.heightInPercent = imgDimensions.height /  srcDimensions.height;
+    this.element.style.width = `${this.widthInPercent * 100}%`;
+    this.element.style.height = `${this.heightInPercent * 100}%`;
   }
   
   positionFromPointerEvent(ev){
@@ -113,6 +130,8 @@ class SuperposableImageBase{
     this.element.addEventListener("click", ()=>{
       let layer = new SuperposableImageLayered(img_url);
       document.querySelector("#layered-image-container").appendChild(layer.element);
+      
+      // layer.initImgSizeInPercent();  
     })
   }
 }
