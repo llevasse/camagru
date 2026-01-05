@@ -108,8 +108,6 @@ class SuperposableImageLayered{
   }
 }
 
-
-
 // Images displayed in superposable images list
 class SuperposableImageBase{
   body = `<div class="superposableImageImgContainer">
@@ -140,33 +138,33 @@ class EditedImage{
   baseImage; // {src, width, height}
   superposableImages;
   finalImageDataUrl;
+  imgEl;
   
   constructor(baseImage, superposableImages, finalImageDataUrl){
     this.baseImage = baseImage;
     this.superposableImages = superposableImages;
     this.finalImageDataUrl = finalImageDataUrl;
-    this.body
+    this.imgEl = new Image();
+    this.imgEl.src = finalImageDataUrl;
   }
   
   toHtmlElement(){
     let e = document.createElement("div");
     e.classList.add("editedImage");
-    let img = document.createElement("img");
-    img.src = this.finalImageDataUrl;
-    e.appendChild(img);
-    let btn = document.createElement("button");
-    btn.innerHTML = "Save";
-    btn.onclick = this.upload();
+    
+    let btn = document.createElement("button")
+    btn.innerHTML = "save";
+    btn.onclick = ()=>{
+      fetch(this.baseImage.src).then(res => res.blob()).then(blob => {      
+        var imgSize = {width: this.baseImage.width, height: this.baseImage.height};      
+        const file = new File([blob], 'dot.png', blob)
+        editingService.uploadPicture(file, JSON.stringify(this.superposableImages), JSON.stringify(imgSize));
+      })  
+    };
+    
+    e.appendChild(this.imgEl);    
     e.appendChild(btn);
     return e;
-  }
-  
-  upload(){
-    fetch(this.baseImage.src).then(res => res.blob()).then(blob => {      
-      var imgSize = {width: this.baseImage.width, height: this.baseImage.height};      
-      const file = new File([blob], 'dot.png', blob)
-      editingService.uploadPicture(file, JSON.stringify(this.superposableImages), JSON.stringify(imgSize));
-    })
   }
 }
 
@@ -209,7 +207,6 @@ class EditingPage{
   saveButton;
   
   focusSource;
-  focusSourceSize;
     
   superposableImagesContainer;
   layereImageContainer;
@@ -239,7 +236,6 @@ class EditingPage{
     if (!this.focusSource.classList.contains("focusSource")){
       this.focusSource.classList.add("focusSource");
     }
-    this.focusSourceSize = this.focusSource.getBoundingClientRect();
     this.resizeEvent(null, null);
 }
 
@@ -257,7 +253,6 @@ class EditingPage{
     if (!this.focusSource.classList.contains("focusSource")){
       this.focusSource.classList.add("focusSource");
     }
-    this.focusSourceSize = this.focusSource.getBoundingClientRect();
     this.resizeEvent(null, null);
   }
   
@@ -279,18 +274,10 @@ class EditingPage{
   
   captureButtonClickEvent(){
     const context = this.canvas.getContext("2d");
-    let width;
-    let height;
     const sourceSize = this.focusSource.getBoundingClientRect();
     
-    if (this.streaming){
-      width = this.video.videoWidth;
-      height = this.video.videoHeight;
-    }
-    else{
-      width = sourceSize.width;
-      height = sourceSize.height;
-    }
+    const width = sourceSize.width;
+    const height = sourceSize.height;
     // const s = width > height ? height : width;
     if (width && height) {
       this.canvas.width = width;
@@ -348,27 +335,6 @@ class EditingPage{
     .catch((err) => {
       console.error(`An error occurred: ${err}`);
     });
-  }
-  
-  saveButtonClickEvent(){
-    fetch(this.editedImagesContainer.src).then(res => res.blob()).then(blob => {
-      var superposables = {};
-      var index = 0;
-      var sourceSize = this.focusSource.getBoundingClientRect();
-      document.querySelectorAll(".superposableImageImgContainer.layered").forEach((element)=>{
-        var size = element.getBoundingClientRect();
-        var x = size.left - sourceSize.left;
-        var y = size.top - sourceSize.top;
-        var src = (new URL(element.firstChild.src)).pathname;
-        superposables[index] = {x:x, y:y, width: size.width, height: size.height, src:src};
-        index++;
-      });
-      
-      var imgSize = {width: sourceSize.width, height: sourceSize.height};      
-      const file = new File([blob], 'dot.png', blob)
-      editingService.uploadPicture(file, JSON.stringify(superposables), JSON.stringify(imgSize));
-      // console.log(file)
-    })
   }
   
   addSuperposableImages(){
