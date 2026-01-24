@@ -129,6 +129,7 @@
       this.element.lastChild.draggable = false;
       this.element.addEventListener("click", ()=>{
         let layer = new SuperposableImageLayered(img_url);
+        document.querySelector("#layered-image-container").dispatchEvent(new Event('newChild'));
         document.querySelector("#layered-image-container").appendChild(layer.element);
         
         // layer.initImgSizeInPercent();  
@@ -181,9 +182,12 @@
           <div id="layered-image-container"></div>
         </div>
         <div id="editing-video-buttons-container">
-          <button id="editing-permissions-button">Allow webcam capture</button>  
-          <button id="editing-capture">Capture photo</button>
-          <input id="editing-upload-button" type="file" accept="image/*">
+          <button class="media-selector-buttons" id="editing-permissions-button">Remove webcam capture</button>
+          <label class="media-selector-buttons">
+            <span>Local file</span>     
+            <input style="display: none;" id="editing-upload-button" type="file" accept="image/*">
+          </label>
+          <button disabled class="media-selector-buttons" id="editing-capture">Capture photo</button>
         </div>
         <div id="superposableImageImgContainer">
         </div>
@@ -199,6 +203,8 @@
     
     streaming = false;
     
+    editingContainer;
+    
     video;
     editingImg;
     canvas;
@@ -211,7 +217,7 @@
     focusSource;
       
     superposableImagesContainer;
-    layereImageContainer;
+    layeredImageContainer;
     editiedImages = [];
     
     removeStream(){
@@ -319,24 +325,25 @@
     
     permsisionButtonClickEvent(){
       if(this.removeStream()) {
-        if (this.editingImg.files.length !== 0){
+        if (this.editingImg.files && this.editingImg.files.length !== 0){
           this.setImgAsSrc();
         }
         this.video.classList.remove("active");
-      };
-      
-      navigator.mediaDevices
-      .getUserMedia({ video: true, audio: false })
-      .then((stream) => {
-        document.getElementById("editing-video").srcObject = stream;
-        document.getElementById("editing-video").play();
-        
-        this.permsisionButton.innerHTML = "Remove webcam capture";
-        this.setVideoAsSrc();
-      })
-      .catch((err) => {
-        console.error(`An error occurred: ${err}`);
-      });
+      }
+      else{
+        navigator.mediaDevices
+        .getUserMedia({ video: true, audio: false })
+        .then((stream) => {
+          document.getElementById("editing-video").srcObject = stream;
+          document.getElementById("editing-video").play();
+          
+          this.permsisionButton.innerHTML = "Remove webcam capture";
+          this.setVideoAsSrc();
+        })
+        .catch((err) => {
+          console.error(`An error occurred: ${err}`);
+        });
+      }
     }
     
     addSuperposableImages(){
@@ -355,7 +362,6 @@
     }
     
     resizeEvent(ev, images){
-      console.log("resize");
       var srcDimention = this.focusSource.getBoundingClientRect();
       document.querySelector("#layered-image-container").style.top = `${srcDimention.top}px`;
       document.querySelector("#layered-image-container").style.left = `${srcDimention.left}px`;
@@ -367,6 +373,8 @@
       history.replaceState("","","https://localhost:833/editing")
       document.getElementById("container").innerHTML = this.body;
       
+      this.editingContainer = document.querySelector("#editing-container");
+      
       this.video = document.getElementById("editing-video");
       this.editingImg = document.getElementById("editing-video-img");
       this.canvas = document.getElementById("editing-canvas");
@@ -375,7 +383,11 @@
       this.permsisionButton = document.getElementById("editing-permissions-button");
       this.saveButton = document.getElementById("save-photo-button");
       this.uploadButton = document.getElementById("editing-upload-button");
-      this.layereImageContainer = document.querySelector("#layered-image-container");
+      this.layeredImageContainer = document.querySelector("#layered-image-container");
+      
+      this.layeredImageContainer.addEventListener("newChild", ()=>{
+        this.captureButton.removeAttribute("disabled");
+      })
       
       this.superposableImagesContainer = document.getElementById("superposableImageImgContainer");
       
@@ -394,8 +406,8 @@
       this.permsisionButtonClickEvent();
       
       // this.layereImageContainer.addEventListener("pointerdown",(ev)=>{console.log(ev)});
-          
-      window.addEventListener("resize", (ev)=>{ this.resizeEvent(ev, this.superposableImages)});
+      
+      window.onresize = (ev)=>{ this.resizeEvent(ev, this.superposableImages)};
     }
     
   }

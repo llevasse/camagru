@@ -40,6 +40,7 @@ async function load(path = null){
   userService.getClient();
   
   if (routes[path]){
+    window.onresize = null;
     document.getElementById("script").remove();
     var s = document.createElement("script");
     s.setAttribute('id', 'script');
