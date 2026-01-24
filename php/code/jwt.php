@@ -1,5 +1,5 @@
 <?php
-  include_once("exceptions/token_expired.php");
+  include_once("/var/www/php/exceptions/token_expired.php");
   class Jwt{    
   
     public function __construct(private string $key){}
@@ -20,6 +20,10 @@
     }
     
     public function decode(string $token): array{
+      if ($token == null || $token == "null"){
+        throw new InvalidArgumentException("Invalid token");
+      }
+    
       if (preg_match("/^(?<header>.+)\.(?<payload>.+)\.(?<signature>.+)$/",$token,$matches) !== 1) {
         throw new InvalidArgumentException("invalid token format");
       }

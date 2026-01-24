@@ -1,5 +1,6 @@
 class AuthService{
   logout(){
+    document.dispatchEvent(new Event("logout"));
     localStorage.removeItem('token');
     load();
   }

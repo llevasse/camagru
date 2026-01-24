@@ -10,6 +10,18 @@ const userService = new UserService();
 const editingService = new EditingService();
 
 var userClient = null;
+var logButtons = document.querySelector("#log-buttons");
+
+document.addEventListener("clientCreated", ()=>{
+  if (!logButtons.classList.contains("logged")){
+    logButtons.classList.add("logged")
+  }
+})
+
+document.addEventListener("logout", ()=>{
+  logButtons.classList.remove("logged")
+  
+})
 
 window.addEventListener("popstate", (e)=>{
   load();
@@ -25,16 +37,7 @@ async function load(path = null){
 	  path = url.pathname;
 	}
   
-  userClient = await userService.getClient();
-  var logButtons = document.querySelector("#log-buttons");
-  if (userClient){
-    if (!logButtons.classList.contains("logged")){
-      logButtons.classList.add("logged")
-    }
-  }
-  else{
-    logButtons.classList.remove("logged")
-  }
+  userService.getClient();
   
   if (routes[path]){
     document.getElementById("script").remove();

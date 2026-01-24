@@ -1,5 +1,5 @@
 <?php
-  include_once("jwt.php");
+  include_once("/var/www/php/jwt.php");
 
   function get_info_from_token( ) {
     $bearer = $_SERVER['HTTP_AUTHORIZATION'];

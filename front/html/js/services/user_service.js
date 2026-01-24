@@ -1,4 +1,10 @@
 class UserService{
+  client;
+  
+  constructor(){
+    this.client = null;
+  }
+
   async getClient(){
     return await fetch("https://localhost:833/profile.php", {
       method: "GET",
@@ -8,8 +14,12 @@ class UserService{
     }).then(async (value)=>{
       if (value.ok){
         return await value.json().then((obj)=>{
-          if (obj)
-            return (new User(obj['id'], obj['username'], obj['email']));
+          if (obj){
+            this.client = new User(obj['id'], obj['username'], obj['email']);
+            document.dispatchEvent(new Event("clientCreated"));
+            return this.client;
+          }
+          this.client = null;
           return null;
         })
       }
