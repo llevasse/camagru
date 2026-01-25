@@ -31,7 +31,14 @@
       quit(json_encode(array("message"=> "Connection failed: " . $conn->connect_error)), 400);
     } 
     
-    $sql = "SELECT pic.id, pic.file_path, pic.uploaded_at, u.username FROM camagru.pictures pic LEFT JOIN camagru.users u ON pic.user_id = u.id";
+    $conn->select_db("camagru");
+    
+    $sql = 'SELECT pic.id, pic.file_path, u.username, pic.uploaded_at,
+    (SELECT JSON_ARRAYAGG(
+      JSON_OBJECT("comment", c.comment, "user_id", c.user_id
+        , "username", (SELECT u.username FROM users u WHERE u.id = c.user_id))) 
+      FROM comments c WHERE c.picture_id = pic.id) as comments
+    FROM pictures pic LEFT JOIN users u ON pic.user_id = u.id';
     if ($userId != null){
       $sql = $sql." WHERE user_id!=?";
     }
@@ -52,7 +59,8 @@
           "path"=>$row['file_path'],
           "id"=>$row['id'],
           "username" => $row['username'],
-          "uploaded_at" => $row['uploaded_at']
+          "uploaded_at" => $row['uploaded_at'],
+          "comments" => json_decode($row['comments'])
           );
       }
       quit(json_encode($rows), 200);

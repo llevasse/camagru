@@ -25,11 +25,21 @@ CREATE TABLE pictures (
 
 CREATE TABLE comments (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  picutes_id INT NOT NULL,
+  picture_id INT NOT NULL,
   user_id INT NOT NULL,
+  comment TEXT,
   uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (picutes_id) REFERENCES pictures(id) ON DELETE CASCADE
+  FOREIGN KEY (picture_id) REFERENCES pictures(id) ON DELETE CASCADE
+);
+
+CREATE TABLE likes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  picture_id INT NOT NULL,
+  user_id INT NOT NULL,
+  liked_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (picture_id) REFERENCES pictures(id) ON DELETE CASCADE
 );
 
 CREATE TABLE superposable_images (

@@ -15,8 +15,7 @@ DC		= docker compose
 all: $(NAME)
 
 $(NAME):
-	mkdir -p db/ images/pictures images/superposables
-	rm -f db/mysql.sock
+	mkdir -p images/pictures images/superposables
 	$(DC) up --build
 
 down:

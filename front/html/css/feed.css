@@ -1,5 +1,7 @@
 .post {
   width: fit-content;
+  
+  max-width: 50vw;
   padding: 1em;
   background: var(--color-foor);
   border-radius: 1em;
@@ -19,4 +21,11 @@
   padding: 1em;
   color: var(--color-two);
   border-radius: 1em 1em 0 0;
+}
+
+
+.comment-text{
+  word-wrap: break-word;
+  white-space: break-spaces;
+  line-break: anywhere;
 }
