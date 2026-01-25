@@ -5,6 +5,7 @@
 
 :root{
   --color-one: #ffde67;
+  --color-one-rgb: 255, 222, 103;
   --color-two: #453400;
   --color-three: #006e5e;
   --color-foor: white;
@@ -38,6 +39,8 @@ h1{
 
 #container{
   height: 100%;
+  background: rgb(var(--color-one-rgb), 0.5);
+
 }
 
 #navbar, #footer{

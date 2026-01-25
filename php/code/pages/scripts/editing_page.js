@@ -153,7 +153,7 @@
     
     toHtmlElement(){
       let e = document.createElement("div");
-      e.classList.add("editedImage");
+      e.classList.add("edited-image");
       
       let btn = document.createElement("button")
       btn.innerHTML = "save";
@@ -194,8 +194,8 @@
       </div>
       <div id="editing-side-div">
         <canvas id="editing-canvas"></canvas>
+        <h2>Images taken</h2>
         <div id="edited-images-output">
-        
         </div>
       </div>
     </div>`;
@@ -313,6 +313,7 @@
         this.editedImagesContainer.insertBefore(editedImage.toHtmlElement(), this.editedImagesContainer.firstChild);
         
         this.editedImagesContainer.setAttribute("src", data);
+        
       } else { // clear photo;
         const context = this.canvas.getContext("2d");
         context.fillStyle = "#aaaaaa";
@@ -362,11 +363,13 @@
     }
     
     resizeEvent(ev, images){
-      var srcDimention = this.focusSource.getBoundingClientRect();
-      document.querySelector("#layered-image-container").style.top = `${srcDimention.top}px`;
-      document.querySelector("#layered-image-container").style.left = `${srcDimention.left}px`;
-      document.querySelector("#layered-image-container").style.width = `${srcDimention.width}px`;
-      document.querySelector("#layered-image-container").style.height = `${srcDimention.height}px`;
+      if (this.focusSource){
+        var srcDimention = this.focusSource.getBoundingClientRect();
+        document.querySelector("#layered-image-container").style.top = `${srcDimention.top}px`;
+        document.querySelector("#layered-image-container").style.left = `${srcDimention.left}px`;
+        document.querySelector("#layered-image-container").style.width = `${srcDimention.width}px`;
+        document.querySelector("#layered-image-container").style.height = `${srcDimention.height}px`;
+      }
     }
     
     constructor(){
@@ -395,19 +398,27 @@
       
       this.video.addEventListener("canplay", ()=>{this.videoCanPlayEvent()});
       
-      this.captureButton.addEventListener("click", ()=>{this.captureButtonClickEvent()});
+      this.captureButton.addEventListener("click", ()=>{this.captureButtonClickEvent();});
         
       this.permsisionButton.addEventListener("click", ()=>{this.permsisionButtonClickEvent()});
       
-      // this.saveButton.addEventListener("click", ()=>{this.saveButtonClickEvent()});   
+      // this.saveButton.addEventListener("click", ()=>{this.saveButtonClickEvent()});
       
+      let editingMainDiv = document.querySelector("#editing-main-div")
+      
+      let resizeObserver = new ResizeObserver((entry)=>{
+        this.resizeEvent(null, null);
+      })
+      
+      resizeObserver.observe(editingMainDiv);
+            
       this.addSuperposableImages();
       
       this.permsisionButtonClickEvent();
       
       // this.layereImageContainer.addEventListener("pointerdown",(ev)=>{console.log(ev)});
       
-      window.onresize = (ev)=>{ this.resizeEvent(ev, this.superposableImages)};
+      // window.onresize = (ev)=>{ this.resizeEvent(ev, this.superposableImages)};
     }
     
   }
