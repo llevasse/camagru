@@ -139,21 +139,39 @@ button:disabled{
 .edited-image{
   position: relative;
   height: fit-content;
-  
-  button{
-    opacity: 0;
-    transition: 300ms;
-    position: absolute;
+   
+  .edited-image-save-button{
     left: 50%;
     top: 50%;
-    translate: -50% -50%;
-    
-    background-color: var(--color-one);
-    border: 1px solid var(--color-two);
-    border-radius: 1em;
-    padding: 1em;
-    font-size: 1em;
   }
+  
+  .edited-image-delete-button{
+    left: 100%;
+    top: 0%;
+  }
+}
+
+.edited-image button{
+  opacity: 0;
+  transition: 300ms;
+  
+  position: absolute;
+  translate: -50% -50%;
+  
+  background-color: var(--color-one);
+  border: 1px solid var(--color-two);
+  border-radius: 1em;
+  padding: 1em;
+  font-size: 1em;
+}
+
+.edited-image button:hover{
+  scale: 1.2;
+}
+
+
+.edited-image button:active{
+  scale: .9;
 }
 
 .edited-image:hover button{

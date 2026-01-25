@@ -142,6 +142,7 @@
     superposableImages;
     finalImageDataUrl;
     imgEl;
+    uploaded;
     
     constructor(baseImage, superposableImages, finalImageDataUrl){
       this.baseImage = baseImage;
@@ -149,24 +150,50 @@
       this.finalImageDataUrl = finalImageDataUrl;
       this.imgEl = new Image();
       this.imgEl.src = finalImageDataUrl;
+      this.uploaded = false;
     }
     
     toHtmlElement(){
       let e = document.createElement("div");
       e.classList.add("edited-image");
       
-      let btn = document.createElement("button")
-      btn.innerHTML = "save";
-      btn.onclick = ()=>{
+      let saveBtn = document.createElement("button")
+      saveBtn.innerHTML = "save";
+      saveBtn.classList.add("edited-image-save-button");
+      saveBtn.onclick = ()=>{
+        if (this.uploaded) return;
         fetch(this.baseImage.src).then(res => res.blob()).then(blob => {      
           var imgSize = {width: this.baseImage.width, height: this.baseImage.height};      
           const file = new File([blob], 'dot.png', blob)
-          editingService.uploadPicture(file, JSON.stringify(this.superposableImages), JSON.stringify(imgSize));
+          editingService.uploadPicture(file, JSON.stringify(this.superposableImages), JSON.stringify(imgSize)).then(response=>{
+            this.uploaded = true;
+            if (response instanceof Response){              
+              if (response.ok){
+                response.json().then(obj=>{
+                  let path = obj['path'];
+                  this.imgEl.src = path;
+                  this.baseImage.src = path;
+                })
+              }
+            }
+          });
         })  
       };
       
+      let deleteBtn = document.createElement("button")
+      deleteBtn.innerHTML = "delete";
+      deleteBtn.classList.add("edited-image-delete-button");
+      deleteBtn.onclick = ()=>{
+        // fetch(this.baseImage.src).then(res => res.blob()).then(blob => {      
+        //   var imgSize = {width: this.baseImage.width, height: this.baseImage.height};      
+        //   const file = new File([blob], 'dot.png', blob)
+        //   editingService.uploadPicture(file, JSON.stringify(this.superposableImages), JSON.stringify(imgSize));
+        // })  
+      };
+      
       e.appendChild(this.imgEl);    
-      e.appendChild(btn);
+      e.appendChild(saveBtn);
+      e.appendChild(deleteBtn);
       return e;
     }
   }

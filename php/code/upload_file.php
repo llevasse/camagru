@@ -96,7 +96,8 @@
       if ($stmt->execute() === false) {
         quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
       }
-      quit(json_encode(["message"=>"Image stored successfully"]), 200);
+      ob_clean();
+      quit(json_encode(["path"=>$filepath]), 200);
     }
     else{
       throw new Exception("photo or superposables missing");
