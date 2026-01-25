@@ -1,0 +1,22 @@
+.post {
+  width: fit-content;
+  padding: 1em;
+  background: var(--color-foor);
+  border-radius: 1em;
+}
+
+#post-list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3em;
+  margin-bottom: 1em;
+}
+
+.post-info-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 1em;
+  color: var(--color-two);
+  border-radius: 1em 1em 0 0;
+}

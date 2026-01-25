@@ -31,7 +31,7 @@
       quit(json_encode(array("message"=> "Connection failed: " . $conn->connect_error)), 400);
     } 
     
-    $sql = "SELECT id, file_path FROM camagru.pictures";
+    $sql = "SELECT pic.id, pic.file_path, pic.uploaded_at, u.username FROM camagru.pictures pic LEFT JOIN camagru.users u ON pic.user_id = u.id";
     if ($userId != null){
       $sql = $sql." WHERE user_id!=?";
     }
@@ -48,7 +48,12 @@
     $result = $stmt->get_result();
     if ($result && $result->num_rows > 0) {
       while($row = mysqli_fetch_assoc($result)) {
-        $rows[] = array("path"=>$row['file_path'], "id"=>$row['id']);
+        $rows[] = array(
+          "path"=>$row['file_path'],
+          "id"=>$row['id'],
+          "username" => $row['username'],
+          "uploaded_at" => $row['uploaded_at']
+          );
       }
       quit(json_encode($rows), 200);
     }

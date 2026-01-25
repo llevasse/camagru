@@ -1,4 +1,5 @@
 var body = `
+  <link id="style" rel="stylesheet" href="/css/feed.css">
   <h1>Camagru</h1>
   <div id="post-list-container"></div>
 `
@@ -14,8 +15,10 @@ var body = `
         Object.values(obj).forEach(value=>{
           let path = value['path'];
           let id = value['id'];
-          if (path && id){
-            let post = new CamagruPost(path);
+          let username = value['username'];
+          let uploadTime = value['uploaded_at'];
+          if (path && id && username && uploadTime){
+            let post = new CamagruPost(path, username, uploadTime);
             postListContainer.insertBefore(post.toHtmlElement(), postListContainer.firstChild);
           }
         })
