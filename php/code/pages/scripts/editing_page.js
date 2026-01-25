@@ -171,6 +171,7 @@
               if (response.ok){
                 response.json().then(obj=>{
                   let path = obj['path'];
+                  this.finalImageDataUrl = path;
                   this.imgEl.src = path;
                   this.baseImage.src = path;
                 })
@@ -184,11 +185,13 @@
       deleteBtn.innerHTML = "delete";
       deleteBtn.classList.add("edited-image-delete-button");
       deleteBtn.onclick = ()=>{
-        // fetch(this.baseImage.src).then(res => res.blob()).then(blob => {      
-        //   var imgSize = {width: this.baseImage.width, height: this.baseImage.height};      
-        //   const file = new File([blob], 'dot.png', blob)
-        //   editingService.uploadPicture(file, JSON.stringify(this.superposableImages), JSON.stringify(imgSize));
-        // })  
+        if (this.uploaded){
+          editingService.deletePicture(this.finalImageDataUrl);
+        }
+        let ancestor = deleteBtn.closest(".edited-image");
+        if (ancestor instanceof HTMLElement){
+          ancestor.remove();
+        }
       };
       
       e.appendChild(this.imgEl);    

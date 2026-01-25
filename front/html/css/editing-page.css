@@ -146,7 +146,7 @@ button:disabled{
   }
   
   .edited-image-delete-button{
-    left: 100%;
+    left: 0%;
     top: 0%;
   }
 }
@@ -178,7 +178,8 @@ button:disabled{
   opacity: 1;
 }
 
-#edited-images-output{
+/* Has at least 2 child */
+#edited-images-output:has(> :nth-child(2)){ 
   display: grid !important;
   grid-template-columns: auto auto;
   gap: 1em;

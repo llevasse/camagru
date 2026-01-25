@@ -17,6 +17,22 @@ class EditingService{
     })
   }
   
+  async deletePicture(url){
+    if (localStorage.getItem('token') == null){
+      console.error("Need to be logged to upload pictures");
+      return null;
+    }
+    const form = new FormData();
+    form.append('url', url);
+    return fetch(`https://localhost:833/delete_file.php`, {
+      method: 'POST',
+      headers : {
+        "Authorization":"Bearer " + localStorage.getItem('token'),
+      },
+      body: form,
+    })
+  }
+  
   async getSuperposableImages(){
     if (localStorage.getItem('token') == null){
       console.error("Need to be logged to get pictures");
