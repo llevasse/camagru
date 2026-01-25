@@ -8,6 +8,7 @@ const routes = {
 const authService = new AuthService();
 const userService = new UserService();
 const editingService = new EditingService();
+const feedService = new FeedService();
 
 var userClient = null;
 var logButtons = document.querySelector("#log-buttons");
