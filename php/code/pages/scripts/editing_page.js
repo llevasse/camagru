@@ -171,9 +171,15 @@
               if (response.ok){
                 response.json().then(obj=>{
                   let path = obj['path'];
-                  this.finalImageDataUrl = path;
-                  this.imgEl.src = path;
-                  this.baseImage.src = path;
+                  let uploadedPicturesList = document.querySelector("#uploaded-pictures");
+                  if (uploadedPicturesList instanceof HTMLElement){
+                    let uploadedImage = new UploadedImage(path);
+                    uploadedPicturesList.insertBefore(uploadedImage.toHtmlElement(), uploadedPicturesList.firstChild);
+                    let ancestor = deleteBtn.closest(".edited-image");
+                    if (ancestor instanceof HTMLElement){
+                      ancestor.remove();
+                    }
+                  }
                 })
               }
             }
@@ -185,9 +191,6 @@
       deleteBtn.innerHTML = "delete";
       deleteBtn.classList.add("edited-image-delete-button");
       deleteBtn.onclick = ()=>{
-        if (this.uploaded){
-          editingService.deletePicture(this.finalImageDataUrl);
-        }
         let ancestor = deleteBtn.closest(".edited-image");
         if (ancestor instanceof HTMLElement){
           ancestor.remove();
@@ -196,6 +199,39 @@
       
       e.appendChild(this.imgEl);    
       e.appendChild(saveBtn);
+      e.appendChild(deleteBtn);
+      return e;
+    }
+  }
+  
+  class UploadedImage{
+    url;
+    imgEl;
+    
+    constructor(url){
+      this.imgEl = new Image();
+      this.imgEl.src = url;
+      this.url = url;
+    }
+    
+    toHtmlElement(){
+      let e = document.createElement("div");
+      e.classList.add("uploaded-image");
+            
+      let deleteBtn = document.createElement("button")
+      deleteBtn.innerHTML = "delete";
+      deleteBtn.classList.add("uploaded-image-delete-button");
+      deleteBtn.onclick = ()=>{
+        if (this.uploaded){
+          editingService.deletePicture(this.finalImageDataUrl);
+        }
+        let ancestor = deleteBtn.closest(".uploaded-image");
+        if (ancestor instanceof HTMLElement){
+          ancestor.remove();
+        }
+      };
+      
+      e.appendChild(this.imgEl);    
       e.appendChild(deleteBtn);
       return e;
     }
@@ -224,11 +260,18 @@
       </div>
       <div id="editing-side-div">
         <canvas id="editing-canvas"></canvas>
-        <h2>Images taken</h2>
+        <h2>Unuploaded images</h2>
         <div id="edited-images-output">
         </div>
       </div>
-    </div>`;
+    </div>
+    <div id="uploaded-pictures-container">
+      <h2>Uploaded pictures</h2>
+      <div id="uploaded-pictures">
+
+      </div>
+    </div>
+    `;
     
     
     streaming = false;
@@ -445,6 +488,18 @@
       this.addSuperposableImages();
       
       this.permsisionButtonClickEvent();
+      
+      editingService.getUserImages().then(response=>{
+        if (response instanceof Response){
+          response.json().then(obj=>{
+            let uploadedPicturesList = document.querySelector("#uploaded-pictures");
+            Object.values(obj).forEach(path=>{
+              let uploadedImage = new UploadedImage(path);
+              uploadedPicturesList.insertBefore(uploadedImage.toHtmlElement(), uploadedPicturesList.firstChild);              
+            })
+          })
+        }
+      });
       
       // this.layereImageContainer.addEventListener("pointerdown",(ev)=>{console.log(ev)});
       

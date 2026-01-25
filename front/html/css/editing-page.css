@@ -136,7 +136,7 @@ button:disabled{
   opacity: .5 !important;
 }
 
-.edited-image{
+.edited-image, .uploaded-image{
   position: relative;
   height: fit-content;
    
@@ -146,12 +146,13 @@ button:disabled{
   }
   
   .edited-image-delete-button{
-    left: 0%;
-    top: 0%;
+    left: -0.5em;
+    top: -0.5em;
+    translate: 0 0;
   }
 }
 
-.edited-image button{
+.edited-image button, .uploaded-image button{
   opacity: 0;
   transition: 300ms;
   
@@ -165,16 +166,16 @@ button:disabled{
   font-size: 1em;
 }
 
-.edited-image button:hover{
+.edited-image button:hover, .uploaded-image button:hover{
   scale: 1.2;
 }
 
 
-.edited-image button:active{
+.edited-image button:active, .uploaded-image button:active{
   scale: .9;
 }
 
-.edited-image:hover button{
+.edited-image:hover button, .uploaded-image:hover button{
   opacity: 1;
 }
 
@@ -183,6 +184,10 @@ button:disabled{
   display: grid !important;
   grid-template-columns: auto auto;
   gap: 1em;
+}
+
+.uploaded-image{
+  width: fit-content;
 }
 
 h2{

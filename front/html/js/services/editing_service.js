@@ -33,6 +33,19 @@ class EditingService{
     })
   }
   
+  async getUserImages(){
+    if (localStorage.getItem('token') == null){
+      console.error("Need to be logged to get pictures");
+      return null;
+    }
+    return fetch(`https://localhost:833/get_user_images.php`, {
+      method: 'GET',
+      headers : {
+        "Authorization":"Bearer " + localStorage.getItem('token'),
+      },
+    })
+  }
+  
   async getSuperposableImages(){
     if (localStorage.getItem('token') == null){
       console.error("Need to be logged to get pictures");
