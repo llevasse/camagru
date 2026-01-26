@@ -42,6 +42,8 @@
     if ($userId != null){
       $sql = $sql." WHERE user_id!=?";
     }
+    $sql = $sql." ORDER BY pic.uploaded_at ASC";
+    
     $stmt = $conn->prepare($sql);
     if ($userId != null){
       if ($stmt->bind_param("i",$userId) === false) {

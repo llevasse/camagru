@@ -18,7 +18,7 @@
 .post-info-container {
   display: flex;
   justify-content: space-between;
-  padding: 1em;
+  padding: 1em 0;
   color: var(--color-two);
   border-radius: 1em 1em 0 0;
 }
@@ -28,4 +28,36 @@
   word-wrap: break-word;
   white-space: break-spaces;
   line-break: anywhere;
+}
+
+.comment-input-container{
+  display: flex;
+  flex-direction: row;
+  border-top: .2em solid var(--color-one);
+}
+
+.comment-input{
+  width: max-content;
+  flex: 1;
+  padding: .5em;
+  box-sizing: border-box;
+  background: var(--color-foor);
+  border: 0;
+  border-radius: 0.5em 0 0 0.5em;
+  outline: none;
+  resize: none;
+}
+
+.comment-send-btn {
+  background: var(--color-one);
+  border: 0;
+  height: -webkit-fill-available;
+  padding: 0 1em;
+}
+
+.image-comment-container {
+  display: flex;
+  flex-direction: column;
+  border: .2em solid var(--color-one);
+  border-radius: 0 0 .5em .5em;
 }

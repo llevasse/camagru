@@ -39,17 +39,17 @@ class CamagruPost{
     return null
   }
   
-  _createCommentsContainer(){
-    let commentsContainer = document.createElement("div");
-    
+  _createCommentsInputContainer(){    
     let inputContainer = document.createElement("div");
-    let input = document.createElement("input");
-    input.type = "text";
-    input.id = "comment-input";
+    inputContainer.className = 'comment-input-container'
+    
+    let input = document.createElement("textarea");    
+    input.className = "comment-input";
+    input.placeholder = "Comment here";
     
     let sendButton = document.createElement("button");
     sendButton.innerText = "send";
-    sendButton.id = "comment-send-btn";
+    sendButton.className = "comment-send-btn";
     sendButton.onclick = ()=>{
       if (input.value.trim().length > 0){
         postsService.sendComment(this.id, input.value.trim());
@@ -58,9 +58,11 @@ class CamagruPost{
     
     inputContainer.appendChild(input);
     inputContainer.appendChild(sendButton);
-    
-    commentsContainer.appendChild(inputContainer);
-    
+    return inputContainer;  
+  }
+  
+  _createCommentsContainer(){    
+    let commentsContainer = document.createElement("div");
     if (this.comments && this.comments.length > 0){
       this.comments.forEach(obj=>{
         let commentContainer = document.createElement("div");
@@ -108,7 +110,13 @@ class CamagruPost{
     infoContaier.appendChild(date);
     
     e.appendChild(infoContaier);
-    e.appendChild(imgEl);
+    
+    let imageCommentContainer = document.createElement("div");
+    imageCommentContainer.className = "image-comment-container"
+    imageCommentContainer.appendChild(imgEl);
+    imageCommentContainer.appendChild(this._createCommentsInputContainer());
+    
+    e.appendChild(imageCommentContainer);
     e.appendChild(this._createCommentsContainer());
     return e;
   }

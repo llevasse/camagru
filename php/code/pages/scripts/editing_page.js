@@ -436,12 +436,13 @@
     }
     
     resizeEvent(ev, images){
-      if (this.focusSource){
+      let layeredImageContainer = document.querySelector("#layered-image-container");
+      if (this.focusSource && layeredImageContainer instanceof HTMLElement){
         var srcDimention = this.focusSource.getBoundingClientRect();
-        document.querySelector("#layered-image-container").style.top = `${srcDimention.top}px`;
-        document.querySelector("#layered-image-container").style.left = `${srcDimention.left}px`;
-        document.querySelector("#layered-image-container").style.width = `${srcDimention.width}px`;
-        document.querySelector("#layered-image-container").style.height = `${srcDimention.height}px`;
+        layeredImageContainer.style.top = `${srcDimention.top}px`;
+        layeredImageContainer.style.left = `${srcDimention.left}px`;
+        layeredImageContainer.style.width = `${srcDimention.width}px`;
+        layeredImageContainer.style.height = `${srcDimention.height}px`;
       }
     }
     
