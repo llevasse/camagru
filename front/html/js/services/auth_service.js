@@ -6,7 +6,7 @@ class AuthService{
   }
 
   async login(username, password){
-    return await fetch("https://localhost:833/login.php", {
+    return await fetch("https://localhost:4243/login.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,7 +33,7 @@ class AuthService{
   }
   
   async signin(username, email, password){
-    return await fetch("https://localhost:833/signin.php", {
+    return await fetch("https://localhost:4243/signin.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

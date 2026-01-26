@@ -15,7 +15,8 @@ DC		= docker compose
 all: $(NAME)
 
 $(NAME):
-	mkdir -p images/pictures images/superposables
+	mkdir -p images/superposables
+	mkdir -m 777 -p images/pictures
 	$(DC) up --build
 
 down:

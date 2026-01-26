@@ -1,8 +1,8 @@
 const routes = {
-  "/sign-in": `https://localhost:833/js/pages/sign-in.js`,
-  "/login": `https://localhost:833/js/pages/login.js`,
-  "/editing": `https://localhost:833/js/pages/editing.js`,
-  "/": `https://localhost:833/js/pages/home.js`,
+  "/sign-in": `/js/pages/sign-in.js`,
+  "/login": `/js/pages/login.js`,
+  "/editing": `/js/pages/editing.js`,
+  "/": `/js/pages/home.js`,
 }
 
 const authService = new AuthService();

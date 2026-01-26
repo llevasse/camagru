@@ -446,7 +446,7 @@
     }
     
     constructor(){
-      history.replaceState("","","https://localhost:833/editing")
+      history.replaceState("","","https://localhost:4243/editing")
       document.getElementById("container").innerHTML = this.body;
       
       this.editingContainer = document.querySelector("#editing-container");
@@ -491,13 +491,15 @@
       
       editingService.getUserImages().then(response=>{
         if (response instanceof Response){
-          response.json().then(obj=>{
-            let uploadedPicturesList = document.querySelector("#uploaded-pictures");
-            Object.values(obj).forEach(path=>{
-              let uploadedImage = new UploadedImage(path);
-              uploadedPicturesList.insertBefore(uploadedImage.toHtmlElement(), uploadedPicturesList.firstChild);              
+          if (response.ok){
+            response.json().then(obj=>{
+              let uploadedPicturesList = document.querySelector("#uploaded-pictures");
+              Object.values(obj).forEach(path=>{
+                let uploadedImage = new UploadedImage(path);
+                uploadedPicturesList.insertBefore(uploadedImage.toHtmlElement(), uploadedPicturesList.firstChild);              
+              })
             })
-          })
+          }
         }
       });
       

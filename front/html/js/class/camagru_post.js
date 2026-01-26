@@ -11,7 +11,6 @@ class CamagruPost{
     this.posterUsername = posterUsername;
     this.uploadTime = uploadTime;
     this.comments = comments;
-    console.log(comments);
   }
   
   getTimeDiffInHour(date1) 
@@ -62,7 +61,7 @@ class CamagruPost{
     
     commentsContainer.appendChild(inputContainer);
     
-    if (this.comments.length > 0){
+    if (this.comments && this.comments.length > 0){
       this.comments.forEach(obj=>{
         let commentContainer = document.createElement("div");
         commentContainer.classList.add("comment-container");
