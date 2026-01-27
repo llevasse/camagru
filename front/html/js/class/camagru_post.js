@@ -5,6 +5,9 @@ class CamagruPost{
   uploadTime;
   comments;
   
+  commentInputElement;
+  commentsContainer;
+  
   constructor(id, url, posterUsername, uploadTime, comments){
     this.id = id;
     this.url = url;
@@ -43,49 +46,70 @@ class CamagruPost{
     let inputContainer = document.createElement("div");
     inputContainer.className = 'comment-input-container'
     
-    let input = document.createElement("textarea");    
-    input.className = "comment-input";
-    input.placeholder = "Comment here";
+    this.commentInputElement = document.createElement("textarea");    
+    this.commentInputElement.className = "comment-input";
+    this.commentInputElement.placeholder = "Comment here";
     
     let sendButton = document.createElement("button");
     sendButton.innerText = "send";
     sendButton.className = "comment-send-btn";
     sendButton.onclick = ()=>{
-      if (input.value.trim().length > 0){
-        postsService.sendComment(this.id, input.value.trim());
-      }
+      this._sendComment(this.commentInputElement.value);
     }
     
-    inputContainer.appendChild(input);
+    this.commentInputElement.addEventListener("keydown", event=>{
+      if (event instanceof KeyboardEvent){
+        if (event.key == "Enter"){
+          this._sendComment(this.commentInputElement.value);
+        }
+      }
+    })
+    
+    inputContainer.appendChild(this.commentInputElement);
     inputContainer.appendChild(sendButton);
     return inputContainer;  
   }
   
+  _sendComment(comment){
+    if (comment.trim().length > 0){
+      postsService.sendComment(this.id, comment.trim());
+      if (this.commentInputElement instanceof HTMLTextAreaElement && this.commentsContainer instanceof HTMLDivElement){
+        this.commentInputElement.value = "";
+        let client = userService.client;
+        if (client instanceof User)
+        this.commentsContainer.appendChild(this._createCommentContainer(comment, client.username))
+      }
+    } 
+  }
+  
+  _createCommentContainer(comment, username){
+    let commentContainer = document.createElement("div");
+    commentContainer.classList.add("comment-container");
+    
+    let commentSpan = document.createElement("span");
+    commentSpan.classList.add("comment-text")
+    commentSpan.innerText = comment;
+    
+    let commentUsernameSpan = document.createElement("span");
+    commentUsernameSpan.classList.add("comment-username")
+    commentUsernameSpan.innerText = username;
+    
+    let p = document.createElement("p");
+    p.innerHTML = `${commentUsernameSpan.outerHTML} ${commentSpan.outerHTML}`
+    
+    commentContainer.appendChild(p);
+    return commentContainer;
+  }
+  
   _createCommentsContainer(){    
-    let commentsContainer = document.createElement("div");
+    this.commentsContainer = document.createElement("div");
     if (this.comments && this.comments.length > 0){
       this.comments.forEach(obj=>{
-        let commentContainer = document.createElement("div");
-        commentContainer.classList.add("comment-container");
-        
-        let commentSpan = document.createElement("span");
-        commentSpan.classList.add("comment-text")
-        commentSpan.innerText = obj['comment'];
-        
-        let commentUsernameSpan = document.createElement("span");
-        commentUsernameSpan.classList.add("comment-username")
-        commentUsernameSpan.innerText = obj['username'];
-        
-        let p = document.createElement("p");
-        p.innerHTML = `${commentUsernameSpan.outerHTML} ${commentSpan.outerHTML}`
-        
-        commentContainer.appendChild(p);
-        
-        commentsContainer.appendChild(commentContainer);
+        this.commentsContainer.appendChild(this._createCommentContainer(obj['comment'], obj['username']));
       });
     }
     
-    return commentsContainer;
+    return this.commentsContainer;
   }
   
   toHtmlElement(){
