@@ -1,7 +1,7 @@
 .post {
-  width: fit-content;
+  width: 30vw;
   
-  max-width: 50vw;
+  max-width: 30vw;
   padding: 1em;
   background: var(--color-foor);
   border-radius: 1em;
@@ -59,4 +59,22 @@
   flex-direction: column;
   border: .2em solid var(--color-one);
   border-radius: 0 0 .5em .5em;
+}
+
+.comments-container p {
+  margin: 0;
+}
+
+.comments-container{
+  max-height: 15vh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  background: rgb(var(--color-one-rgb), 0.4);
+  gap: 0.2em;
+}
+
+.comment-container {
+  background: var(--color-foor);
+  padding: .5em 0;
 }
