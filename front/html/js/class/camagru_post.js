@@ -61,6 +61,7 @@ class CamagruPost{
       if (event instanceof KeyboardEvent){
         if (event.key == "Enter"){
           this._sendComment(this.commentInputElement.value);
+          event.preventDefault();
         }
       }
     })
@@ -88,6 +89,7 @@ class CamagruPost{
     
     let commentSpan = document.createElement("span");
     commentSpan.classList.add("comment-text")
+    console.log(comment);
     commentSpan.innerText = comment;
     
     let commentUsernameSpan = document.createElement("span");
