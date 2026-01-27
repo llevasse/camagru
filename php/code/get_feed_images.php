@@ -16,8 +16,10 @@
     $info = get_info_from_token();
     $userId = $info['id'];
   }
+  catch(TokenExpired $e){
+    quit(json_encode(["message"=> "Token expired"]), 400);
+  }
   catch(Exception $e) {
-      // quit(json_encode(["message"=> $e->getMessage()]), 400);
   }
   
   try{
@@ -39,17 +41,9 @@
         , "username", (SELECT u.username FROM users u WHERE u.id = c.user_id))) 
       FROM comments c WHERE c.picture_id = pic.id) as comments
     FROM pictures pic LEFT JOIN users u ON pic.user_id = u.id';
-    if ($userId != null){
-      $sql = $sql." WHERE user_id!=?";
-    }
     $sql = $sql." ORDER BY pic.uploaded_at ASC";
     
     $stmt = $conn->prepare($sql);
-    if ($userId != null){
-      if ($stmt->bind_param("i",$userId) === false) {
-        quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);
-      }
-    }
     if ($stmt->execute() === false) {
       quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
     }

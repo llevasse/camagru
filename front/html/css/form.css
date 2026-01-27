@@ -14,7 +14,7 @@ form{
   
   box-shadow: .5em .5em .3em var(--color-two);
   
-  margin: 10rem;
+  /* margin: 10rem; */
   
   label{
     width: fit-content;

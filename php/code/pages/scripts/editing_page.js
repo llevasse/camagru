@@ -318,7 +318,8 @@
         this.focusSource.classList.add("focusSource");
       }
       this.resizeEvent(null, null);
-  }
+      this.clearSelectedSuperposableImages();
+    }
   
     setImgAsSrc(){
       if (this.focusSource && this.focusSource.classList.contains("focusSource")){
@@ -335,6 +336,7 @@
         this.focusSource.classList.add("focusSource");
       }
       this.resizeEvent(null, null);
+      this.clearSelectedSuperposableImages();
     }
     
     uploadButtonChangeEvent(){
@@ -444,6 +446,11 @@
         layeredImageContainer.style.width = `${srcDimention.width}px`;
         layeredImageContainer.style.height = `${srcDimention.height}px`;
       }
+    }
+    
+    clearSelectedSuperposableImages(){
+      document.querySelector("#layered-image-container").innerHTML = "";
+      this.captureButton.setAttribute("disabled", "true");
     }
     
     constructor(){
