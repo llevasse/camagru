@@ -55,8 +55,8 @@
   
   img{
     max-width: 100%;
-    width: 100%;
-    /* max-height: 25dvh; */
+    /* width: 100%; */
+    max-height: 25dvh;
     object-fit: contain;
   }
 }

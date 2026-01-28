@@ -170,10 +170,7 @@
       console.log(baseImage, superposableImages);
     }
     
-    toHtmlElement(){
-      let e = document.createElement("div");
-      e.classList.add("edited-image");
-      
+    _saveButton(){
       let saveBtn = document.createElement("button")
       saveBtn.innerHTML = "save";
       saveBtn.classList.add("edited-image-save-button");
@@ -199,9 +196,16 @@
           })
           
           editingService.uploadPicture(file, JSON.stringify(superposables), JSON.stringify(imgSize));
+          let ancestor = saveBtn.closest(".edited-image");
+          if (ancestor instanceof HTMLElement){
+            ancestor.remove();
+          }
         })  
       };
-      
+      return saveBtn;
+    }
+    
+    _deleteButton(){
       let deleteBtn = document.createElement("button")
       deleteBtn.innerHTML = "delete";
       deleteBtn.classList.add("edited-image-delete-button");
@@ -211,13 +215,26 @@
           ancestor.remove();
         }
       };
+      return deleteBtn;
+    }
+    
+    toHtmlElement(){
+      let e = document.createElement("div");
+      e.classList.add("edited-image");
       
       let superposableImagesContainer = document.createElement("div");
       superposableImagesContainer.className = "editedSuperposableImagesContainer"
       
+      this.superposableImages.forEach((image)=>{
+        if (image instanceof SuperposableImageLayered){
+          superposableImagesContainer.appendChild(image.element);
+        }
+      })
+      
       e.appendChild(this.imgEl);    
-      e.appendChild(saveBtn);
-      e.appendChild(deleteBtn);
+      e.appendChild(superposableImagesContainer);
+      e.appendChild(this._saveButton());
+      e.appendChild(this._deleteButton());
       return e;
     }
   }
@@ -408,20 +425,12 @@
       })
     }
     
-    resizeEvent(ev, images){
-      // let layeredImageContainer = document.querySelector("#layered-image-container");
-      // if (this.focusSource && layeredImageContainer instanceof HTMLElement){
-      //   var srcDimention = this.focusSource.getBoundingClientRect();
-      //   layeredImageContainer.style.top = `${srcDimention.top}px`;
-      //   layeredImageContainer.style.left = `${srcDimention.left}px`;
-      //   layeredImageContainer.style.width = `${srcDimention.width}px`;
-      //   layeredImageContainer.style.height = `${srcDimention.height}px`;
-      // }
-    }
+    resizeEvent(ev, images){}
     
     clearSelectedSuperposableImages(){
       document.querySelector("#layered-image-container").innerHTML = "";
-      this.captureButton.setAttribute("disabled", "true");
+      document.querySelector("#editing-capture").setAttribute('disabled', true);
+      console.log(document.querySelector("#editing-capture").getAttribute("disabled"));
       this.activeSuperposableImages = [];
     }
     
@@ -442,6 +451,7 @@
       this.layeredImageContainer = document.querySelector("#layered-image-container");
       
       this.layeredImageContainer.addEventListener("newChild", (event)=>{
+        console.log("newChild");
         this.activeSuperposableImages.push(event.detail);
         this.captureButton.removeAttribute("disabled");
       })
@@ -461,12 +471,13 @@
       
       this.video.addEventListener("canplay", ()=>{this.videoCanPlayEvent()});
       
-      this.captureButton.addEventListener("click", ()=>{this.captureButtonClickEvent();});
+      this.captureButton.addEventListener("click", ()=>{
+        this.captureButtonClickEvent();
+        this.clearSelectedSuperposableImages();
+      });
         
       this.permsisionButton.addEventListener("click", ()=>{this.permsisionButtonClickEvent()});
-      
-      // this.saveButton.addEventListener("click", ()=>{this.saveButtonClickEvent()});
-      
+            
       let editingMainDiv = document.querySelector("#editing-main-div")
       
       let resizeObserver = new ResizeObserver((entry)=>{
@@ -477,11 +488,7 @@
             
       this.addSuperposableImages();
       
-      this.permsisionButtonClickEvent();
-      
-      // this.layereImageContainer.addEventListener("pointerdown",(ev)=>{console.log(ev)});
-      
-      // window.onresize = (ev)=>{ this.resizeEvent(ev, this.superposableImages)};
+      this.permsisionButtonClickEvent();      
     }
     
   }

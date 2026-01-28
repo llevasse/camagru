@@ -1,7 +1,8 @@
-
 .edited-image, .uploaded-image{
   position: relative;
   height: fit-content;
+  max-height: 25dvh;
+  width: fit-content;
    
   .edited-image-save-button{
     left: 50%;
