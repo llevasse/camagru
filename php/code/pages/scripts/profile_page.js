@@ -29,7 +29,7 @@
               let uploadTime = value['uploaded_at'];
               let comments = value['comments'];
               if (path && id && username && uploadTime){
-                let post = new CamagruPost(id, path, username, uploadTime, comments);
+                let post = new CamagruPost(id, path, username, uploadTime, comments, {allowDelete: true});
                 postListContainer.insertBefore(post.toHtmlElement(), postListContainer.firstChild);
               }
             })

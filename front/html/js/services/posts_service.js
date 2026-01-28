@@ -24,4 +24,20 @@ class PostsService{
       body: comment
     })
   }
+  
+  async deletePost(url){
+    if (localStorage.getItem('token') == null){
+      console.error("Need to be logged to delete pictures");
+      return null;
+    }
+    const form = new FormData();
+    form.append('url', url);
+    return fetch(`https://localhost:4243/delete_file.php`, {
+      method: 'POST',
+      headers : {
+        "Authorization":"Bearer " + localStorage.getItem('token'),
+      },
+      body: form,
+    })
+  }
 }

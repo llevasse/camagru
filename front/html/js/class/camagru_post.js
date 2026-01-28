@@ -4,16 +4,18 @@ class CamagruPost{
   posterUsername;
   uploadTime;
   comments;
+  allowDelete;
   
   commentInputElement;
   commentsContainer;
   
-  constructor(id, url, posterUsername, uploadTime, comments){
+  constructor(id, url, posterUsername, uploadTime, comments, {allowDelete= false} = {allowDelete:false}){
     this.id = id;
     this.url = url;
     this.posterUsername = posterUsername;
     this.uploadTime = uploadTime;
     this.comments = comments;
+    this.allowDelete = allowDelete;
   }
   
   getTimeDiffInHour(date1) 
@@ -114,6 +116,21 @@ class CamagruPost{
     return this.commentsContainer;
   }
   
+  _createDeleteButton(){
+    let btn = document.createElement("button");
+    btn.className = "delete-post-btn";
+    btn.onclick = ()=>{
+      postsService.deletePost(this.url)
+      if (btn.closest('.post'))
+        btn.closest('.post').remove();
+    };
+    
+    let img = document.createElement("img");
+    btn.appendChild(img);
+    
+    return btn;
+  }
+  
   toHtmlElement(){
     let e = document.createElement("div");
     e.classList.add("post");
@@ -144,6 +161,9 @@ class CamagruPost{
     
     e.appendChild(imageCommentContainer);
     e.appendChild(this._createCommentsContainer());
+    if (this.allowDelete){
+      e.appendChild(this._createDeleteButton());
+    }
     return e;
   }
 }

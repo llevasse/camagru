@@ -5,6 +5,7 @@
   padding: 1em;
   background: var(--color-foor);
   border-radius: 1em;
+  position: relative;
 }
 
 .post-info-container {
@@ -69,4 +70,28 @@
 .comment-container {
   background: var(--color-foor);
   padding: .5em 0;
+}
+
+.delete-post-btn {
+  display: flex;
+  width: fit-content;
+  flex-direction: row;
+  font-size: 1rem;
+  position: absolute;
+  left: 100%;
+  top: 0;
+  translate: -50% -50%;
+  
+  padding: 0.5em;
+  border: 0.2em solid var(--color-one);
+  background: var(--color-foor);
+  border-radius: 1em;
+}
+
+.delete-post-btn img{
+  mask: url(/assets/bin.svg);
+  mask-size: 1.5em;
+  width: 1.5em;
+  height: 1.5em;
+  background: var(--color-one);
 }
