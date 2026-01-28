@@ -1,4 +1,3 @@
-
 {
   // Layered images displayed over webcam video or user uploaded image
   class SuperposableImageLayered{
@@ -6,6 +5,7 @@
       <img class="superposableImageImg" src="{IMG_SRC}">
     </div>`;
     
+    img_url;
     
     defaultSpawnXPositionPercent = .20;
     defaultSpawnYPositionPercent = .20;
@@ -16,21 +16,18 @@
     xPositionPercent = .2;
     yPositionPercent = .2;
     
+    allowMoving;
+    
     move = false;
     begPosition;
     newPosition;
     index = null;
     
-    editingVideoContainer;
     layeredImageContainer;
     
     element;
     
-    constructor(img_url){
-      this.editingVideoContainer = document.querySelector("#editing-video-container");
-      this.layeredImageContainer = document.querySelector("#layered-image-container");
-      const srcDimensions = document.querySelector(".focusSource").getBoundingClientRect();
-      
+    constructor(img_url, {index=0, allowMoving} = {index: document.querySelector("#layered-image-container").length, allowMoving:true}){
       this.element = document.createElement("div");
       this.element.draggable = false;
       this.element.classList.add("superposableImageImgContainer");
@@ -38,6 +35,8 @@
   
       this.element.style.left = `${this.defaultSpawnXPositionPercent * 100}%`;
       this.element.style.top = `${this.defaultSpawnYPositionPercent * 100}%`;
+      
+      this.img_url = img_url;
       
       const img = new Image();
       img.onload = (ev)=>{this.initImgSizeInPercent()};
@@ -47,17 +46,14 @@
       
       this.element.appendChild(img);
       
-      
-      this.layeredImageContainer.style.top = `${srcDimensions.top}px`;
-      this.layeredImageContainer.style.left = `${srcDimensions.left}px`;
-      this.layeredImageContainer.style.width = `${srcDimensions.width}px`;
-      this.layeredImageContainer.style.height = `${srcDimensions.height}px`;
-      
-      this.index = this.layeredImageContainer.children.length;
+      this.index = index;
+      this.allowMoving = allowMoving;
       
       this.element.addEventListener("pointerdown", (ev)=>{this.onpointerdown(ev);})
       this.element.addEventListener("pointerup", (ev)=>{this.onpointerup(ev);})
-      this.element.addEventListener("pointermove", (ev)=>{this.onpointermove(ev);})    
+      this.element.addEventListener("pointermove", (ev)=>{this.onpointermove(ev);})
+      
+      document.querySelector("#layered-image-container").dispatchEvent(new CustomEvent('newChild', {'detail':this}));
     }
     
     // Needs to be called after img has been added to DOM
@@ -79,16 +75,21 @@
     }
     
     onpointerdown(ev){
-      this.move = true;
-      this.begPosition = this.positionFromPointerEvent(ev);
+      if (this.allowMoving){
+        this.move = true;
+        this.begPosition = this.positionFromPointerEvent(ev);
+        document.querySelector("#layered-image-container").dispatchEvent(new CustomEvent('movedChild', {'detail':this}));      
+      }
     }
     
     onpointerup(ev){
-      this.move = false;
+      if (this.allowMoving){
+        this.move = false;
+      }
     }
     
     onpointermove(ev){
-      if (this.move){
+      if (this.allowMoving && this.move){
         this.newPosition = this.positionFromPointerEvent(ev);   
         if (this.index != null){
           var elementPos = this.element.getBoundingClientRect();
@@ -108,6 +109,7 @@
         }
       }
     }
+    
   }
   
   // Images displayed in superposable images list
@@ -127,9 +129,13 @@
       this.element.lastChild.classList.add("superposableImageImg")
       this.element.lastChild.src = img_url;
       this.element.lastChild.draggable = false;
+    
+      
+      this.editingVideoContainer = document.querySelector("#editing-video-container");
+      this.layeredImageContainer = document.querySelector("#layered-image-container");
+      
       this.element.addEventListener("click", ()=>{
         let layer = new SuperposableImageLayered(img_url);
-        document.querySelector("#layered-image-container").dispatchEvent(new Event('newChild'));
         document.querySelector("#layered-image-container").appendChild(layer.element);
         
         // layer.initImgSizeInPercent();  
@@ -145,12 +151,23 @@
     uploaded;
     
     constructor(baseImage, superposableImages, finalImageDataUrl){
+      if (!(superposableImages instanceof Array)){
+        throw ("superposableImages should be an array of SuperposableImageLayered class instance")
+      }
+      if (superposableImages.length == 0){
+        throw ("superposableImages should contain at least one element")
+      }
+      if (!(superposableImages[0] instanceof SuperposableImageLayered)){
+        throw ("superposableImages should contain SuperposableImageLayered instances")
+      }
+      
       this.baseImage = baseImage;
       this.superposableImages = superposableImages;
       this.finalImageDataUrl = finalImageDataUrl;
       this.imgEl = new Image();
       this.imgEl.src = finalImageDataUrl;
       this.uploaded = false;
+      console.log(baseImage, superposableImages);
     }
     
     toHtmlElement(){
@@ -165,7 +182,23 @@
         fetch(this.baseImage.src).then(res => res.blob()).then(blob => {      
           var imgSize = {width: this.baseImage.width, height: this.baseImage.height};      
           const file = new File([blob], 'dot.png', blob)
-          editingService.uploadPicture(file, JSON.stringify(this.superposableImages), JSON.stringify(imgSize));
+          
+                  
+          let superposables = {};
+          var index = 0;
+          this.superposableImages.forEach((image)=>{
+            if (image instanceof SuperposableImageLayered){
+              superposables[index] = {
+                x:image.xPositionPercent * imgSize.width,
+                y:image.yPositionPercent * imgSize.height,
+                width: image.widthInPercent * imgSize.width,
+                height: image.heightInPercent * imgSize.height,
+                src:image.img_url};
+              index++;  
+            }
+          })
+          
+          editingService.uploadPicture(file, JSON.stringify(superposables), JSON.stringify(imgSize));
         })  
       };
       
@@ -178,6 +211,9 @@
           ancestor.remove();
         }
       };
+      
+      let superposableImagesContainer = document.createElement("div");
+      superposableImagesContainer.className = "editedSuperposableImagesContainer"
       
       e.appendChild(this.imgEl);    
       e.appendChild(saveBtn);
@@ -235,7 +271,9 @@
       
     superposableImagesContainer;
     layeredImageContainer;
-    editiedImages = [];
+    
+    editedImages = [];
+    activeSuperposableImages = [];
     
     removeStream(){
       if (this.streaming){  // cancel stream
@@ -311,35 +349,24 @@
         this.canvas.height = height;
         context.drawImage(this.focusSource, 0, 0, width, height);
         const baseImageDataUrl = this.canvas.toDataURL("image/png");
-        
-        var superposables = {};
-        var index = 0;
-        document.querySelectorAll(".superposableImageImgContainer.layered").forEach((element)=>{
-          var size = element.getBoundingClientRect();
-          var x = size.left - sourceSize.left;
-          var y = size.top - sourceSize.top;
-          var src = (new URL(element.firstChild.src)).pathname;
-          superposables[index] = {x:x, y:y, width: size.width, height: size.height, src:src};
-          index++;
-          context.drawImage(element.firstChild, x, y, size.width, size.height);
-        });
+
         const data = this.canvas.toDataURL("image/png");
         
-        const editedImage = new EditedImage({src: baseImageDataUrl, width: width, height: height}, superposables, data);
+        let clonedSuperposables = this.activeSuperposableImages.slice();
+        clonedSuperposables.forEach((element)=>{
+          if (element instanceof SuperposableImageLayered){
+            element.allowMoving = false;
+          }
+        })
+        const editedImage = new EditedImage({src: baseImageDataUrl, width: width, height: height}, clonedSuperposables, data);
         
-        this.editiedImages.push(editedImage);
+        this.editedImages.push(editedImage);
         
-        this.editedImagesContainer.insertBefore(editedImage.toHtmlElement(), this.editedImagesContainer.firstChild);
-        
-        this.editedImagesContainer.setAttribute("src", data);
-        
+        this.editedImagesContainer.insertBefore(editedImage.toHtmlElement(), this.editedImagesContainer.firstChild);        
       } else { // clear photo;
         const context = this.canvas.getContext("2d");
         context.fillStyle = "#aaaaaa";
         context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-  
-        // const data = this.canvas.toDataURL("image/png");
-        // this.editedImagesContainer.setAttribute("src", data);
       }
     }
     
@@ -382,19 +409,20 @@
     }
     
     resizeEvent(ev, images){
-      let layeredImageContainer = document.querySelector("#layered-image-container");
-      if (this.focusSource && layeredImageContainer instanceof HTMLElement){
-        var srcDimention = this.focusSource.getBoundingClientRect();
-        layeredImageContainer.style.top = `${srcDimention.top}px`;
-        layeredImageContainer.style.left = `${srcDimention.left}px`;
-        layeredImageContainer.style.width = `${srcDimention.width}px`;
-        layeredImageContainer.style.height = `${srcDimention.height}px`;
-      }
+      // let layeredImageContainer = document.querySelector("#layered-image-container");
+      // if (this.focusSource && layeredImageContainer instanceof HTMLElement){
+      //   var srcDimention = this.focusSource.getBoundingClientRect();
+      //   layeredImageContainer.style.top = `${srcDimention.top}px`;
+      //   layeredImageContainer.style.left = `${srcDimention.left}px`;
+      //   layeredImageContainer.style.width = `${srcDimention.width}px`;
+      //   layeredImageContainer.style.height = `${srcDimention.height}px`;
+      // }
     }
     
     clearSelectedSuperposableImages(){
       document.querySelector("#layered-image-container").innerHTML = "";
       this.captureButton.setAttribute("disabled", "true");
+      this.activeSuperposableImages = [];
     }
     
     constructor(){
@@ -413,8 +441,18 @@
       this.uploadButton = document.getElementById("editing-upload-button");
       this.layeredImageContainer = document.querySelector("#layered-image-container");
       
-      this.layeredImageContainer.addEventListener("newChild", ()=>{
+      this.layeredImageContainer.addEventListener("newChild", (event)=>{
+        this.activeSuperposableImages.push(event.detail);
         this.captureButton.removeAttribute("disabled");
+      })
+      
+      this.layeredImageContainer.addEventListener("movedChild", (event)=>{
+        let detail = event.detail;
+        if (detail instanceof SuperposableImageLayered){
+          if (this.activeSuperposableImages.at(detail.index)){
+            this.activeSuperposableImages[detail.index] = detail;
+          }
+        }
       })
       
       this.superposableImagesContainer = document.getElementById("superposableImageImgContainer");
