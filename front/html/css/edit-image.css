@@ -1,0 +1,48 @@
+
+.edited-image, .uploaded-image{
+  position: relative;
+  height: fit-content;
+   
+  .edited-image-save-button{
+    left: 50%;
+    top: 50%;
+  }
+  
+  .edited-image-delete-button{
+    left: -0.5em;
+    top: -0.5em;
+    translate: 0 0;
+  }
+}
+
+.edited-image button, .uploaded-image button{
+  opacity: 0;
+  transition: 300ms;
+  
+  position: absolute;
+  translate: -50% -50%;
+  
+  background-color: var(--color-one);
+  border: 1px solid var(--color-two);
+  border-radius: 1em;
+  padding: 1em;
+  font-size: 1em;
+}
+
+.edited-image button:hover, .uploaded-image button:hover{
+  scale: 1.2;
+}
+
+
+.edited-image button:active, .uploaded-image button:active{
+  scale: .9;
+}
+
+.edited-image:hover button, .uploaded-image:hover button{
+  opacity: 1;
+}
+
+
+.uploaded-image{
+  width: fit-content;
+}

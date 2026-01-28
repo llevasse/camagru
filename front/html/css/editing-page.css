@@ -46,18 +46,18 @@
 }
 
 #editing-side-div #edited-images-output{
-    align-self: center;
-    flex: 1;
-    display: block;
-    /* align-content: center; */
+  align-self: center;
+  flex: 1;
+  display: block;
+  /* align-content: center; */
+  width: 100%;
+  
+  img{
+    max-width: 100%;
     width: 100%;
-    
-    img{
-      max-width: 100%;
-      width: 100%;
-      /* max-height: 25dvh; */
-      object-fit: contain;
-    }
+    /* max-height: 25dvh; */
+    object-fit: contain;
+  }
 }
 #editing-video-img, #editing-video{
   display: none;
@@ -139,58 +139,11 @@ button:disabled{
   opacity: .5 !important;
 }
 
-.edited-image, .uploaded-image{
-  position: relative;
-  height: fit-content;
-   
-  .edited-image-save-button{
-    left: 50%;
-    top: 50%;
-  }
-  
-  .edited-image-delete-button{
-    left: -0.5em;
-    top: -0.5em;
-    translate: 0 0;
-  }
-}
-
-.edited-image button, .uploaded-image button{
-  opacity: 0;
-  transition: 300ms;
-  
-  position: absolute;
-  translate: -50% -50%;
-  
-  background-color: var(--color-one);
-  border: 1px solid var(--color-two);
-  border-radius: 1em;
-  padding: 1em;
-  font-size: 1em;
-}
-
-.edited-image button:hover, .uploaded-image button:hover{
-  scale: 1.2;
-}
-
-
-.edited-image button:active, .uploaded-image button:active{
-  scale: .9;
-}
-
-.edited-image:hover button, .uploaded-image:hover button{
-  opacity: 1;
-}
-
 /* Has at least 2 child */
 #edited-images-output:has(> :nth-child(2)){ 
   display: grid !important;
   grid-template-columns: auto auto;
   gap: 1em;
-}
-
-.uploaded-image{
-  width: fit-content;
 }
 
 h2{

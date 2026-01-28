@@ -9,9 +9,10 @@
   }
   
   
+  ob_start();
+  $userId = null;
+  
   try{
-    ob_start();
-
     $info = get_info_from_token();
     $userId = $info['id'];
     
@@ -25,11 +26,20 @@
       quit(json_encode(array("message"=> "Connection failed: " . $conn->connect_error)), 400);
     } 
     
-    $sql = "SELECT file_path FROM camagru.pictures WHERE user_id=?";
+    $conn->select_db("camagru");
+    
+    $sql = 'SELECT pic.id, pic.file_path, u.username, pic.uploaded_at,
+    (SELECT JSON_ARRAYAGG(
+      JSON_OBJECT("comment", c.comment, "user_id", c.user_id
+        , "username", (SELECT u.username FROM users u WHERE u.id = c.user_id))) 
+      FROM comments c WHERE c.picture_id = pic.id) as comments
+    FROM pictures pic LEFT JOIN users u ON pic.user_id = u.id
+    WHERE pic.user_id = ?
+    ORDER BY pic.uploaded_at ASC
+    ';
+    
     $stmt = $conn->prepare($sql);
-    if ($stmt->bind_param("i",$userId) === false) {
-      quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);
-    }
+    $stmt->bind_param('i', $userId);
     if ($stmt->execute() === false) {
       quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
     }
@@ -37,7 +47,13 @@
     $result = $stmt->get_result();
     if ($result && $result->num_rows > 0) {
       while($row = mysqli_fetch_assoc($result)) {
-        $rows[] = $row['file_path'];
+        $rows[] = array(
+          "path"=>$row['file_path'],
+          "id"=>$row['id'],
+          "username" => $row['username'],
+          "uploaded_at" => $row['uploaded_at'],
+          "comments" => json_decode($row['comments'])
+          );
       }
       quit(json_encode($rows), 200);
     }
@@ -56,4 +72,5 @@
   catch(Exception $e) {
     quit(json_encode(["message"=> $e->getMessage()]), 400);
   }
+    
 ?>

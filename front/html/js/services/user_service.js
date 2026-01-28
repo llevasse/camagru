@@ -29,4 +29,13 @@ class UserService{
       return null;
     });
   }
+  
+  async getClientPosts(){
+    return await fetch("https://localhost:4243/get_client_posts.php", {
+      method: "GET",
+      headers : {
+        "Authorization":"Bearer " + localStorage.getItem('token'),
+      }
+    });
+  }
 }

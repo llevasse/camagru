@@ -2,6 +2,7 @@ const routes = {
   "/sign-in": `/js/pages/sign-in.js`,
   "/login": `/js/pages/login.js`,
   "/editing": `/js/pages/editing.js`,
+  "/profile": `/js/pages/profile.js`,
   "/": `/js/pages/home.js`,
 }
 

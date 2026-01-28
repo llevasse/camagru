@@ -165,25 +165,7 @@
         fetch(this.baseImage.src).then(res => res.blob()).then(blob => {      
           var imgSize = {width: this.baseImage.width, height: this.baseImage.height};      
           const file = new File([blob], 'dot.png', blob)
-          editingService.uploadPicture(file, JSON.stringify(this.superposableImages), JSON.stringify(imgSize)).then(response=>{
-            this.uploaded = true;
-            if (response instanceof Response){              
-              if (response.ok){
-                response.json().then(obj=>{
-                  let path = obj['path'];
-                  let uploadedPicturesList = document.querySelector("#uploaded-pictures");
-                  if (uploadedPicturesList instanceof HTMLElement){
-                    let uploadedImage = new UploadedImage(path);
-                    uploadedPicturesList.insertBefore(uploadedImage.toHtmlElement(), uploadedPicturesList.firstChild);
-                    let ancestor = deleteBtn.closest(".edited-image");
-                    if (ancestor instanceof HTMLElement){
-                      ancestor.remove();
-                    }
-                  }
-                })
-              }
-            }
-          });
+          editingService.uploadPicture(file, JSON.stringify(this.superposableImages), JSON.stringify(imgSize));
         })  
       };
       
@@ -204,42 +186,10 @@
     }
   }
   
-  class UploadedImage{
-    url;
-    imgEl;
-    
-    constructor(url){
-      this.imgEl = new Image();
-      this.imgEl.src = url;
-      this.url = url;
-    }
-    
-    toHtmlElement(){
-      let e = document.createElement("div");
-      e.classList.add("uploaded-image");
-            
-      let deleteBtn = document.createElement("button")
-      deleteBtn.innerHTML = "delete";
-      deleteBtn.classList.add("uploaded-image-delete-button");
-      deleteBtn.onclick = ()=>{
-        if (this.uploaded){
-          editingService.deletePicture(this.finalImageDataUrl);
-        }
-        let ancestor = deleteBtn.closest(".uploaded-image");
-        if (ancestor instanceof HTMLElement){
-          ancestor.remove();
-        }
-      };
-      
-      e.appendChild(this.imgEl);    
-      e.appendChild(deleteBtn);
-      return e;
-    }
-  }
-  
   class EditingPage{
     body = `
     <link id="style" rel="stylesheet" href="/css/editing-page.css">
+    <link id="style" rel="stylesheet" href="/css/edit-image.css">
     <div id="editing-container">
       <div id="editing-main-div">
         <div id="editing-video-container">
@@ -263,12 +213,6 @@
         <h2>Unuploaded images</h2>
         <div id="edited-images-output">
         </div>
-      </div>
-    </div>
-    <div id="uploaded-pictures-container">
-      <h2>Uploaded pictures</h2>
-      <div id="uploaded-pictures">
-
       </div>
     </div>
     `;
@@ -496,20 +440,6 @@
       this.addSuperposableImages();
       
       this.permsisionButtonClickEvent();
-      
-      editingService.getUserImages().then(response=>{
-        if (response instanceof Response){
-          if (response.ok){
-            response.json().then(obj=>{
-              let uploadedPicturesList = document.querySelector("#uploaded-pictures");
-              Object.values(obj).forEach(path=>{
-                let uploadedImage = new UploadedImage(path);
-                uploadedPicturesList.insertBefore(uploadedImage.toHtmlElement(), uploadedPicturesList.firstChild);              
-              })
-            })
-          }
-        }
-      });
       
       // this.layereImageContainer.addEventListener("pointerdown",(ev)=>{console.log(ev)});
       
