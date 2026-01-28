@@ -31,6 +31,9 @@
       quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
     }
     $result = $stmt->get_result();
+    if ($result->num_rows == 0) {
+      quit(json_encode(["message"=>"Could not get profile"]), 400);
+    }
     $result = $result->fetch_assoc();
     quit(json_encode($result), 200);
   }

@@ -23,6 +23,9 @@ class UserService{
           return null;
         })
       }
+      else{
+        localStorage.removeItem('token');
+      }
       return null;
     });
   }

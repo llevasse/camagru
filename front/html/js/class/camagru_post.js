@@ -89,7 +89,7 @@ class CamagruPost{
     
     let commentSpan = document.createElement("span");
     commentSpan.classList.add("comment-text")
-    commentSpan.innerText = comment;
++    commentSpan.innerText = comment;
     
     let commentUsernameSpan = document.createElement("span");
     commentUsernameSpan.classList.add("comment-username")
