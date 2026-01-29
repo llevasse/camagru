@@ -170,14 +170,25 @@
       console.log(baseImage, superposableImages);
     }
     
-    toHtmlElement(){
-      let e = document.createElement("div");
-      e.classList.add("edited-image");
+    _createDeleteButton(){
+      let btn = document.createElement("button");
+      btn.className = "edited-image-delete-button";
+      btn.onclick = ()=>{
+        let ancestor = btn.closest('.edited-image');
+        if (ancestor)
+          ancestor.remove();
+      };
       
-      let saveBtn = document.createElement("button")
-      saveBtn.innerHTML = "save";
-      saveBtn.classList.add("edited-image-save-button");
-      saveBtn.onclick = ()=>{
+      let img = document.createElement("img");
+      btn.appendChild(img);
+      
+      return btn;
+    }
+    
+    _createSaveButton(){
+      let btn = document.createElement("button");
+      btn.className = "edited-image-save-button";
+      btn.onclick = ()=>{
         if (this.uploaded) return;
         fetch(this.baseImage.src).then(res => res.blob()).then(blob => {      
           var imgSize = {width: this.baseImage.width, height: this.baseImage.height};      
@@ -199,25 +210,33 @@
           })
           
           editingService.uploadPicture(file, JSON.stringify(superposables), JSON.stringify(imgSize));
-        })  
+        })
+        let ancestor = btn.closest('.edited-image');
+        if (ancestor)
+          ancestor.remove();
       };
       
-      let deleteBtn = document.createElement("button")
-      deleteBtn.innerHTML = "delete";
-      deleteBtn.classList.add("edited-image-delete-button");
-      deleteBtn.onclick = ()=>{
-        let ancestor = deleteBtn.closest(".edited-image");
-        if (ancestor instanceof HTMLElement){
-          ancestor.remove();
-        }
-      };
+      let img = document.createElement("img");
+      btn.appendChild(img);
+      
+      return btn;
+    }
+    
+    toHtmlElement(){
+      let e = document.createElement("div");
+      e.classList.add("edited-image");
       
       let superposableImagesContainer = document.createElement("div");
       superposableImagesContainer.className = "editedSuperposableImagesContainer"
       
-      e.appendChild(this.imgEl);    
-      e.appendChild(saveBtn);
-      e.appendChild(deleteBtn);
+      
+      let buttonsContainer = document.createElement("div");
+      buttonsContainer.className = "edited-buttons-container";
+      buttonsContainer.appendChild(this._createSaveButton());
+      buttonsContainer.appendChild(this._createDeleteButton());
+      
+      e.appendChild(this.imgEl);
+      e.appendChild(buttonsContainer);
       return e;
     }
   }
