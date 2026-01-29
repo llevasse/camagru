@@ -170,11 +170,25 @@
       console.log(baseImage, superposableImages);
     }
     
-    _saveButton(){
-      let saveBtn = document.createElement("button")
-      saveBtn.innerHTML = "save";
-      saveBtn.classList.add("edited-image-save-button");
-      saveBtn.onclick = ()=>{
+    _createDeleteButton(){
+      let btn = document.createElement("button");
+      btn.className = "edited-image-delete-button";
+      btn.onclick = ()=>{
+        let ancestor = btn.closest('.edited-image');
+        if (ancestor)
+          ancestor.remove();
+      };
+      
+      let img = document.createElement("img");
+      btn.appendChild(img);
+      
+      return btn;
+    }
+    
+    _createSaveButton(){
+      let btn = document.createElement("button");
+      btn.className = "edited-image-save-button";
+      btn.onclick = ()=>{
         if (this.uploaded) return;
         fetch(this.baseImage.src).then(res => res.blob()).then(blob => {      
           var imgSize = {width: this.baseImage.width, height: this.baseImage.height};      
@@ -196,26 +210,16 @@
           })
           
           editingService.uploadPicture(file, JSON.stringify(superposables), JSON.stringify(imgSize));
-          let ancestor = saveBtn.closest(".edited-image");
-          if (ancestor instanceof HTMLElement){
-            ancestor.remove();
-          }
-        })  
-      };
-      return saveBtn;
-    }
-    
-    _deleteButton(){
-      let deleteBtn = document.createElement("button")
-      deleteBtn.innerHTML = "delete";
-      deleteBtn.classList.add("edited-image-delete-button");
-      deleteBtn.onclick = ()=>{
-        let ancestor = deleteBtn.closest(".edited-image");
-        if (ancestor instanceof HTMLElement){
+        })
+        let ancestor = btn.closest('.edited-image');
+        if (ancestor)
           ancestor.remove();
-        }
       };
-      return deleteBtn;
+      
+      let img = document.createElement("img");
+      btn.appendChild(img);
+      
+      return btn;
     }
     
     toHtmlElement(){
@@ -231,10 +235,14 @@
         }
       })
       
+      let buttonsContainer = document.createElement("div");
+      buttonsContainer.className = "edited-buttons-container";
+      buttonsContainer.appendChild(this._createSaveButton());
+      buttonsContainer.appendChild(this._createDeleteButton());
+      
       e.appendChild(this.imgEl);    
-      e.appendChild(superposableImagesContainer);
-      e.appendChild(this._saveButton());
-      e.appendChild(this._deleteButton());
+      e.appendChild(superposableImagesContainer);;      
+      e.appendChild(buttonsContainer);
       return e;
     }
   }
