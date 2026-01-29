@@ -74,15 +74,33 @@ class CamagruPost{
     
     let likeButton = document.createElement("button");
     likeButton.className = "like-btn";
-    likeButton.appendChild(new Image());
-    likeButton.onclick = ()=>{
-      postsService.likePost(this.id);
+    if (this.likedByClient){
+      likeButton.classList.add("liked");
     }
+    likeButton.appendChild(new Image());
+    
     let likesCount = document.createElement("span");
     likesCount.className = "likes-count";
     likesCount.innerText = this.likes;
     
     likeButton.appendChild(likesCount);
+    
+    likeButton.onclick = ()=>{
+      if (this.likedByClient){
+        this.likes--;
+        postsService.unlikePost(this.id);
+        likeButton.classList.remove("liked");
+        this.likedByClient = false;
+        likesCount.innerText = this.likes;
+      }
+      else{
+        this.likes++;
+        postsService.likePost(this.id);
+        likeButton.classList.add("liked");
+        this.likedByClient = true;
+        likesCount.innerText = this.likes;
+      }
+    }
     
     
     inputContainer.appendChild(this.commentInputElement);

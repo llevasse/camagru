@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="heart.svg"
+   inkscape:export-filename="filled_heart.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false" />
+  <path
+     d="M 9,2 H 5 V 4 H 3 V 6 H 1 v 6 h 2 v 2 h 2 v 2 h 2 v 2 h 2 v 2 h 2 v 2 h 2 v -2 h 2 v -2 h 2 v -2 h 2 v -2 h 2 v -2 h 2 V 6 H 21 V 4 H 19 V 2 H 15 V 4 H 13 V 6 H 11 V 4 H 9 Z"
+     fill="#000000"
+     id="path2"
+     sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccccccccc" />
+</svg>

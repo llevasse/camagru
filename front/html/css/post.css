@@ -72,8 +72,17 @@
   align-self: center;
 }
 
-.comment-input-container button:hover img{
-  background: var(--color-foor);
+.comment-input-container button span{
+  transition: 300ms;
+}
+
+.comment-input-container button:hover{
+  img{
+    background: var(--color-foor);
+  }
+  span{
+    color: var(--color-foor);
+  }
 }
 
 .comment-send-btn img{
@@ -83,6 +92,11 @@
 
 .like-btn img{
   mask: url(/assets/heart.svg);
+}
+
+
+.like-btn.liked img{
+  mask: url(/assets/filled_heart.svg);
 }
 
 .likes-count {

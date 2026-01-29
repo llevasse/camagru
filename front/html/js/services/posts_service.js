@@ -38,6 +38,19 @@ class PostsService{
     })
   }
   
+  async unlikePost(postId){
+    const form = new FormData();
+    form.append('post_id', postId);
+
+    return await fetch("https://localhost:4243/unlike_post.php", {
+      method: "POST",
+      headers : {
+        "Authorization":"Bearer " + localStorage.getItem('token'),
+      },
+      body: form
+    })
+  }
+  
   async deletePost(url){
     if (localStorage.getItem('token') == null){
       console.error("Need to be logged to delete pictures");
