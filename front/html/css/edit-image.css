@@ -1,6 +1,7 @@
 .edited-image, .uploaded-image{
   position: relative;
   height: fit-content;
+  width: fit-content;
 }
 
 .edited-buttons-container {
@@ -38,7 +39,7 @@
   background: var(--color-one);
 }
 
-.edited-buttons-container button img:hover{
+.edited-buttons-container button:hover img{
   background: var(--color-foor);
 
 }
@@ -48,4 +49,15 @@
 }
 .edited-image-delete-button img{
   mask: url(/assets/bin.svg);
+}
+.edited-image-edit-button img{
+  mask: url(/assets/edit.svg);
+}
+
+.editedSuperposableImagesContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 }

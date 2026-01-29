@@ -37,9 +37,13 @@
 #editing-video-buttons-container{
   display: flex;
   flex-direction: row;
-  gap: 1rem;
-  justify-content: space-evenly;
+  gap: .2rem;
+  font-size: 2.5em;
+  background-color: var(--color-one);
+  border:.2rem solid var(--color-one);
 }
+
+
 
 #editing-side-div{
   display: flex;
@@ -50,12 +54,10 @@
   align-self: center;
   flex: 1;
   display: block;
-  /* align-content: center; */
   width: 100%;
   
   img{
     max-width: 100%;
-    /* width: 100%; */
     max-height: 25dvh;
     object-fit: contain;
   }
@@ -84,6 +86,11 @@
 #superposableImageImgContainer{
   display: flex;
   flex-direction: row;
+}
+
+#editing-video-n-buttons-container {
+  width: fit-content;
+  align-self: center;
 }
 
 .superposableImageImgContainer, .superposableImageImg{
@@ -116,23 +123,52 @@
 }
 
 .media-selector-buttons{
-  background-color: var(--color-one);
-  border: 1px solid var(--color-two);
-  border-radius: 1em;
-  padding: 1em;
+  transition: 300ms;
+  display: flex;
+  flex-direction: row;
   font-size: 1em;
+  padding: 0.5em;
+  border: 0;
+  background-color: var(--color-foor) !important;
   
   display: flex;
   align-items: center;
-  
-  span{
-    width: -webkit-fill-available;
-    display: block;
-    text-align: center;
-  }
-  
-  
+  flex: 1;
+  justify-content: center;
 }
+
+.media-selector-buttons:hover{
+  background-color: var(--color-one) !important;
+  img, span{
+    background-color: var(--color-foor);
+  }
+}
+
+.media-selector-buttons img{
+  transition: 300ms;
+  mask-size: 1.5em !important;
+  width: 1.5em !important;
+  height: 1.5em;
+  background: var(--color-one);
+}
+
+.video-on img{
+  mask: url(/assets/video.svg);
+}
+
+.video-off img{
+  mask: url(/assets/video-off.svg);
+}
+
+#file-upload-button img{
+  mask: url(/assets/upload.svg);
+}
+
+
+#editing-capture img{
+  mask: url(/assets/camera.svg);
+}
+
 
 #editing-capture{
   opacity: 1;

@@ -21,20 +21,20 @@
     move = false;
     begPosition;
     newPosition;
-    index = null;
+    index = 0;
     
     layeredImageContainer;
     
-    element;
+    superposableElement;
     
-    constructor(img_url, {index=0, allowMoving} = {index: document.querySelector("#layered-image-container").length, allowMoving:true}){
-      this.element = document.createElement("div");
-      this.element.draggable = false;
-      this.element.classList.add("superposableImageImgContainer");
-      this.element.classList.add("layered");
+    constructor(img_url, {index=0, allowMoving=true}){
+      this.superposableElement = document.createElement("div");
+      this.superposableElement.draggable = false;
+      this.superposableElement.classList.add("superposableImageImgContainer");
+      this.superposableElement.classList.add("layered");
   
-      this.element.style.left = `${this.defaultSpawnXPositionPercent * 100}%`;
-      this.element.style.top = `${this.defaultSpawnYPositionPercent * 100}%`;
+      this.superposableElement.style.left = `${this.defaultSpawnXPositionPercent * 100}%`;
+      this.superposableElement.style.top = `${this.defaultSpawnYPositionPercent * 100}%`;
       
       this.img_url = img_url;
       
@@ -44,26 +44,27 @@
       img.classList.add("superposableImageImg");
       img.draggable = false;
       
-      this.element.appendChild(img);
+      this.superposableElement.appendChild(img);
+      
       
       this.index = index;
       this.allowMoving = allowMoving;
       
-      this.element.addEventListener("pointerdown", (ev)=>{this.onpointerdown(ev);})
-      this.element.addEventListener("pointerup", (ev)=>{this.onpointerup(ev);})
-      this.element.addEventListener("pointermove", (ev)=>{this.onpointermove(ev);})
+      this.superposableElement.addEventListener("pointerdown", (ev)=>{this.onpointerdown(ev);})
+      this.superposableElement.addEventListener("pointerup", (ev)=>{this.onpointerup(ev);})
+      this.superposableElement.addEventListener("pointermove", (ev)=>{this.onpointermove(ev);})
       
       document.querySelector("#layered-image-container").dispatchEvent(new CustomEvent('newChild', {'detail':this}));
     }
     
     // Needs to be called after img has been added to DOM
     initImgSizeInPercent(){
-      const imgDimensions = this.element.lastChild.getBoundingClientRect();
+      const imgDimensions = this.superposableElement.lastChild.getBoundingClientRect();
       const srcDimensions = document.querySelector(".focusSource").getBoundingClientRect();
       this.widthInPercent = imgDimensions.width /  srcDimensions.width;
       this.heightInPercent = imgDimensions.height /  srcDimensions.height;
-      this.element.style.width = `${this.widthInPercent * 100}%`;
-      this.element.style.height = `${this.heightInPercent * 100}%`;
+      this.superposableElement.style.width = `${this.widthInPercent * 100}%`;
+      this.superposableElement.style.height = `${this.heightInPercent * 100}%`;
     }
     
     positionFromPointerEvent(ev){
@@ -78,13 +79,13 @@
       if (this.allowMoving){
         this.move = true;
         this.begPosition = this.positionFromPointerEvent(ev);
-        document.querySelector("#layered-image-container").dispatchEvent(new CustomEvent('movedChild', {'detail':this}));      
       }
     }
     
     onpointerup(ev){
       if (this.allowMoving){
         this.move = false;
+        document.querySelector("#layered-image-container").dispatchEvent(new CustomEvent('movedChild', {'detail':this}));      
       }
     }
     
@@ -92,7 +93,7 @@
       if (this.allowMoving && this.move){
         this.newPosition = this.positionFromPointerEvent(ev);   
         if (this.index != null){
-          var elementPos = this.element.getBoundingClientRect();
+          var elementPos = this.superposableElement.getBoundingClientRect();
           var diff = {offsetX : this.newPosition.offsetX - this.begPosition.offsetX, offsetY : this.newPosition.offsetY - this.begPosition.offsetY};
           
           var srcDimensions = document.querySelector(".focusSource").getBoundingClientRect();
@@ -104,8 +105,8 @@
           this.xPositionPercent = left / srcDimensions.width;
           this.yPositionPercent = top / srcDimensions.height;
           
-          this.element.style.left = `${this.xPositionPercent * 100}%`;
-          this.element.style.top = `${this.yPositionPercent * 100}%`;
+          this.superposableElement.style.left = `${this.xPositionPercent * 100}%`;
+          this.superposableElement.style.top = `${this.yPositionPercent * 100}%`;
         }
       }
     }
@@ -135,8 +136,9 @@
       this.layeredImageContainer = document.querySelector("#layered-image-container");
       
       this.element.addEventListener("click", ()=>{
-        let layer = new SuperposableImageLayered(img_url);
-        document.querySelector("#layered-image-container").appendChild(layer.element);
+        let container =document.querySelector("#layered-image-container"); 
+        let layer = new SuperposableImageLayered(img_url, {index: container.childElementCount});
+        container.appendChild(layer.superposableElement);
         
         // layer.initImgSizeInPercent();  
       })
@@ -167,7 +169,6 @@
       this.imgEl = new Image();
       this.imgEl.src = finalImageDataUrl;
       this.uploaded = false;
-      console.log(baseImage, superposableImages);
     }
     
     _createDeleteButton(){
@@ -222,6 +223,22 @@
       return btn;
     }
     
+    _createEditButton(){
+      let btn = document.createElement("button");
+      btn.className = "edited-image-edit-button";
+      btn.onclick = ()=>{
+        document.querySelector("#editing-container").dispatchEvent(new CustomEvent('reEditImage', {detail: this}))
+        let ancestor = btn.closest('.edited-image');
+        if (ancestor)
+          ancestor.remove();
+      };
+      
+      let img = document.createElement("img");
+      btn.appendChild(img);
+      
+      return btn;
+    }
+    
     toHtmlElement(){
       let e = document.createElement("div");
       e.classList.add("edited-image");
@@ -231,13 +248,14 @@
       
       this.superposableImages.forEach((image)=>{
         if (image instanceof SuperposableImageLayered){
-          superposableImagesContainer.appendChild(image.element);
+          superposableImagesContainer.appendChild(image.superposableElement);
         }
       })
       
       let buttonsContainer = document.createElement("div");
       buttonsContainer.className = "edited-buttons-container";
       buttonsContainer.appendChild(this._createSaveButton());
+      buttonsContainer.appendChild(this._createEditButton());
       buttonsContainer.appendChild(this._createDeleteButton());
       
       e.appendChild(this.imgEl);    
@@ -253,19 +271,26 @@
     <link id="style" rel="stylesheet" href="/css/edit-image.css">
     <div id="editing-container">
       <div id="editing-main-div">
-        <div id="editing-video-container">
-          <video id="editing-video"></video>
-          <img id="editing-video-img"></img>
-          <div id="layered-image-container"></div>
+        <div id="editing-video-n-buttons-container">
+          <div id="editing-video-container">
+            <video id="editing-video"></video>
+            <img id="editing-video-img"></img>
+            <div id="layered-image-container"></div>
+          </div>
+          <div id="editing-video-buttons-container">
+            <button class="media-selector-buttons video-off" id="video-permissions-button">
+              <img>
+            </button>
+            <label class="media-selector-buttons" id="file-upload-button">
+              <img>
+              <input style="display: none;" id="editing-upload-button" type="file" accept="image/*">
+            </label>
+            <button disabled class="media-selector-buttons" id="editing-capture">
+              <img>
+            </button>
+          </div>
         </div>
-        <div id="editing-video-buttons-container">
-          <button class="media-selector-buttons" id="editing-permissions-button">Remove webcam capture</button>
-          <label class="media-selector-buttons">
-            <span>Local file</span>     
-            <input style="display: none;" id="editing-upload-button" type="file" accept="image/*">
-          </label>
-          <button disabled class="media-selector-buttons" id="editing-capture">Capture photo</button>
-        </div>
+        
         <div id="superposableImageImgContainer">
         </div>
       </div>
@@ -300,11 +325,21 @@
     editedImages = [];
     activeSuperposableImages = [];
     
+    toggleVideoButtonClass(){
+      if (this.permsisionButton.classList.contains('video-on')){
+        this.permsisionButton.classList.replace('video-on', 'video-off')
+      }
+      else{
+        this.permsisionButton.classList.replace('video-off', 'video-on')
+      }
+    
+    }
+    
     removeStream(){
       if (this.streaming){  // cancel stream
         this.video.srcObject.getTracks().forEach(track=>track.stop());
         this.streaming = false;
-        this.permsisionButton.innerHTML = "Allow webcam capture";
+        this.toggleVideoButtonClass()
         return 1;
       }
       return 0
@@ -377,12 +412,15 @@
 
         const data = this.canvas.toDataURL("image/png");
         
-        let clonedSuperposables = this.activeSuperposableImages.slice();
-        clonedSuperposables.forEach((element)=>{
-          if (element instanceof SuperposableImageLayered){
-            element.allowMoving = false;
+        let clonedSuperposables = [];
+        
+        this.activeSuperposableImages.forEach((image)=>{
+          if (image instanceof SuperposableImageLayered){
+            image.allowMoving = false;
+            let newImage = image;
+            clonedSuperposables.push(newImage);
           }
-        })
+        });
         const editedImage = new EditedImage({src: baseImageDataUrl, width: width, height: height}, clonedSuperposables, data);
         
         this.editedImages.push(editedImage);
@@ -409,7 +447,7 @@
           document.getElementById("editing-video").srcObject = stream;
           document.getElementById("editing-video").play();
           
-          this.permsisionButton.innerHTML = "Remove webcam capture";
+          this.toggleVideoButtonClass();
           this.setVideoAsSrc();
         })
         .catch((err) => {
@@ -438,7 +476,6 @@
     clearSelectedSuperposableImages(){
       document.querySelector("#layered-image-container").innerHTML = "";
       document.querySelector("#editing-capture").setAttribute('disabled', true);
-      console.log(document.querySelector("#editing-capture").getAttribute("disabled"));
       this.activeSuperposableImages = [];
     }
     
@@ -453,13 +490,12 @@
       this.canvas = document.getElementById("editing-canvas");
       this.editedImagesContainer = document.getElementById("edited-images-output");
       this.captureButton = document.getElementById("editing-capture");
-      this.permsisionButton = document.getElementById("editing-permissions-button");
+      this.permsisionButton = document.getElementById("video-permissions-button");
       this.saveButton = document.getElementById("save-photo-button");
       this.uploadButton = document.getElementById("editing-upload-button");
       this.layeredImageContainer = document.querySelector("#layered-image-container");
       
       this.layeredImageContainer.addEventListener("newChild", (event)=>{
-        console.log("newChild");
         this.activeSuperposableImages.push(event.detail);
         this.captureButton.removeAttribute("disabled");
       })
@@ -470,6 +506,24 @@
           if (this.activeSuperposableImages.at(detail.index)){
             this.activeSuperposableImages[detail.index] = detail;
           }
+        }
+      })
+      
+      this.editingContainer.addEventListener("reEditImage", (event)=>{
+        let editedImage = event.detail;
+        if (editedImage instanceof EditedImage){
+          this.clearSelectedSuperposableImages();
+          this.removeStream();
+          this.setImgAsSrc();
+          this.editingImg.src = editedImage.finalImageDataUrl;
+          let clonedSuperposables = editedImage.superposableImages.slice();
+          clonedSuperposables.forEach((element)=>{
+            if (element instanceof SuperposableImageLayered){
+              element.allowMoving = true;
+              this.layeredImageContainer.dispatchEvent(new CustomEvent('newChild', {'detail':element}));
+              this.layeredImageContainer.appendChild(element.superposableElement);
+            }
+          })          
         }
       })
       
