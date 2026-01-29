@@ -53,8 +53,8 @@ class CamagruPost{
     this.commentInputElement.placeholder = "Comment here";
     
     let sendButton = document.createElement("button");
-    sendButton.innerText = "send";
     sendButton.className = "comment-send-btn";
+    sendButton.appendChild(new Image());
     sendButton.onclick = ()=>{
       this._sendComment(this.commentInputElement.value);
     }
@@ -68,8 +68,16 @@ class CamagruPost{
       }
     })
     
+    
+    let likeButton = document.createElement("button");
+    likeButton.className = "like-btn";
+    likeButton.appendChild(new Image());
+    likeButton.onclick = ()=>{
+    }
+    
     inputContainer.appendChild(this.commentInputElement);
     inputContainer.appendChild(sendButton);
+    inputContainer.appendChild(likeButton);
     return inputContainer;  
   }
   

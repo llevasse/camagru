@@ -40,11 +40,48 @@
   resize: none;
 }
 
-.comment-send-btn {
-  background: var(--color-one);
-  border: 0;
+.comment-input-container button{
+  transition: 300ms;
+  width: fit-content;
   height: -webkit-fill-available;
-  padding: 0 1em;
+  
+  display: flex;
+  flex-direction: row;
+  
+  font-size: 1rem;
+  
+  border: 0;
+  
+  padding: .5rem;
+  /* padding: 0 1em; */
+  background-color: var(--color-foor);
+}
+
+.comment-input-container button:hover{
+  background-color: var(--color-one);
+
+}
+
+.comment-input-container button img{
+  transition: 300ms;
+  mask-size: 1.5em !important;
+  width: 1.5em !important;
+  height: 1.5em;
+  background: var(--color-one);
+  align-self: center;
+}
+
+.comment-input-container button:hover img{
+  background: var(--color-foor);
+}
+
+.comment-send-btn img{
+  mask: url(/assets/message-arrow-right.svg);
+}
+
+
+.like-btn img{
+  mask: url(/assets/heart.svg);
 }
 
 .image-comment-container {
