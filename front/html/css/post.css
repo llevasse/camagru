@@ -53,6 +53,7 @@
   border: 0;
   
   padding: .5rem;
+  gap: .5rem;
   /* padding: 0 1em; */
   background-color: var(--color-foor);
 }
@@ -82,6 +83,12 @@
 
 .like-btn img{
   mask: url(/assets/heart.svg);
+}
+
+.likes-count {
+  color: var(--color-one);
+  text-align: center;
+  align-self: center;
 }
 
 .image-comment-container {

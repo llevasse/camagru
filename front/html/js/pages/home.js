@@ -18,8 +18,10 @@ var body = `
           let username = value['username'];
           let uploadTime = value['uploaded_at'];
           let comments = value['comments'];
-          if (path && id && username && uploadTime){
-            let post = new CamagruPost(id, path, username, uploadTime, comments);
+          let likes= value['likes'];
+          let likedByClient = value['likes_from_client'];
+          if (path && id && username && uploadTime && likes != undefined && likedByClient != undefined){
+            let post = new CamagruPost(id, path, username, uploadTime, comments, likes, likedByClient);
             postListContainer.insertBefore(post.toHtmlElement(), postListContainer.firstChild);
           }
         })

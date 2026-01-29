@@ -8,18 +8,21 @@ class CamagruPost{
   
   commentInputElement;
   commentsContainer;
+  likes;
+  likedByClient;
   
-  constructor(id, url, posterUsername, uploadTime, comments, {allowDelete= false} = {allowDelete:false}){
+  constructor(id, url, posterUsername, uploadTime, comments, likes, likedByClient, {allowDelete= false} = {allowDelete:false}){
     this.id = id;
     this.url = url;
     this.posterUsername = posterUsername;
     this.uploadTime = uploadTime;
     this.comments = comments;
     this.allowDelete = allowDelete;
+    this.likes = likes;
+    this.likedByClient = likedByClient;
   }
   
-  getTimeDiffInHour(date1) 
-  {
+  getTimeDiffInHour(date1) {
     if (date1 instanceof Date){
       let now = new Date(Date.now());
       var milliseconds =(now.getTime() - date1.getTime());
@@ -73,7 +76,14 @@ class CamagruPost{
     likeButton.className = "like-btn";
     likeButton.appendChild(new Image());
     likeButton.onclick = ()=>{
+      postsService.likePost(this.id);
     }
+    let likesCount = document.createElement("span");
+    likesCount.className = "likes-count";
+    likesCount.innerText = this.likes;
+    
+    likeButton.appendChild(likesCount);
+    
     
     inputContainer.appendChild(this.commentInputElement);
     inputContainer.appendChild(sendButton);

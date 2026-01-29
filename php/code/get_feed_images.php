@@ -36,14 +36,19 @@
     $conn->select_db("camagru");
     
     $sql = 'SELECT pic.id, pic.file_path, u.username, pic.uploaded_at,
+    COUNT(l.id) as likes,
+    (SELECT COUNT(li.id) FROM likes li WHERE li.picture_id = pic.id AND li.user_id = ?) as from_client,
     (SELECT JSON_ARRAYAGG(
       JSON_OBJECT("comment", c.comment, "user_id", c.user_id
         , "username", (SELECT u.username FROM users u WHERE u.id = c.user_id))) 
       FROM comments c WHERE c.picture_id = pic.id) as comments
-    FROM pictures pic LEFT JOIN users u ON pic.user_id = u.id';
+    FROM pictures pic LEFT JOIN users u ON pic.user_id = u.id
+    LEFT JOIN likes l ON l.picture_id = pic.id GROUP BY pic.id
+    ';
     $sql = $sql." ORDER BY pic.uploaded_at ASC";
     
     $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $userId);
     if ($stmt->execute() === false) {
       quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
     }
@@ -56,7 +61,9 @@
           "id"=>$row['id'],
           "username" => $row['username'],
           "uploaded_at" => $row['uploaded_at'],
-          "comments" => json_decode($row['comments'])
+          "comments" => json_decode($row['comments']),
+          "likes" => $row['likes'],
+          "likes_from_client" => $row['from_client'] == 1,
           );
       }
       quit(json_encode($rows), 200);
