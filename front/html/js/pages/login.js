@@ -11,6 +11,7 @@ var body = `
       <input placeholder="Password..." type="password" id="password-input" autocomplete="off">
     </label>
     <button type="submit">Login</button>
+    <a id="send-reset-password">Send reset password mail </br>To user with provided username</a>
     <small id="return-value"></small>
   </form>
 `
@@ -19,6 +20,15 @@ var body = `
   history.replaceState("","","https://localhost:4243/login")
 	document.getElementById("container").innerHTML = body;
 	localStorage.removeItem("token");
+  
+  let username_input = document.querySelector("#username-input");
+	
+  let resetPasswordBtn = document.querySelector("#send-reset-password");	
+  if (resetPasswordBtn instanceof HTMLElement){
+    resetPasswordBtn.onclick = ()=>{
+      userService.resetPasswordMail(username_input.value);
+    }
+  }
 }
 
 async function login(event){

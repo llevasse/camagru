@@ -51,6 +51,21 @@ form{
 }
 
 #login-form, #signin-form{
+  #send-reset-password {
+    cursor: default;
+    align-self: center;
+    font-size: 0.8em;
+    opacity: 0.5;
+    text-decoration: underline;
+    transition: 300ms;
+    text-align: center;
+  }
+
+  #send-reset-password:hover {
+    font-size: 1em;
+    opacity: 1;
+  }
+
   button{
     transition: 300ms;
     border: .2em solid var(--color-one);

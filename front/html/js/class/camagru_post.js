@@ -193,7 +193,9 @@ class CamagruPost{
     let imageCommentContainer = document.createElement("div");
     imageCommentContainer.className = "image-comment-container"
     imageCommentContainer.appendChild(imgEl);
-    imageCommentContainer.appendChild(this._createCommentsInputContainer());
+    if (userService.client){
+      imageCommentContainer.appendChild(this._createCommentsInputContainer());
+    }
     
     e.appendChild(imageCommentContainer);
     e.appendChild(this._createCommentsContainer());

@@ -58,6 +58,7 @@ input#client-comment-notif {
 }
 
 #send-reset-password {
+  cursor: default;
   align-self: center;
   font-size: 0.8em;
   opacity: 0.5;

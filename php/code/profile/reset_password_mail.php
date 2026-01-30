@@ -55,23 +55,40 @@
     
   try{
     $conn = get_db_conn();
-    
-    $info = get_info_from_token();
-    
-    $userId = $info['id'];
-    
-    $sql = "SELECT username, email FROM camagru.users WHERE id=?";
-    $stmt = $conn->prepare($sql);    
-    if ($stmt->bind_param("i",  $userId) === false) {
-      quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);
+    $stmt;
+    try{
+      $info = get_info_from_token();
+      $userId = $info['id'];
+      
+      $sql = "SELECT id, username, email FROM camagru.users WHERE id=?";
+      $stmt = $conn->prepare($sql);    
+      if ($stmt->bind_param("i",  $userId) === false) {
+        quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);
+      }
+      if ($stmt->execute() === false) {
+        quit(json_encode(array("message"=> "SQL excute failed: " . $stmt->error)), 400);
+      }
     }
-    if ($stmt->execute() === false) {
-      quit(json_encode(array("message"=> "SQL excute failed: " . $stmt->error)), 400);
-    }
+    catch(InvalidArgumentException $e) {
+      if (!isset($_GET['username'])){
+        throw new Exception('Username is required to send reset password');
+      }
+      $username = $_GET['username'];
+      $sql = "SELECT id, username, email FROM camagru.users WHERE username=?";
+      $stmt = $conn->prepare($sql);    
+      if ($stmt->bind_param("s",  $username) === false) {
+        quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);
+      }
+      if ($stmt->execute() === false) {
+        quit(json_encode(array("message"=> "SQL excute failed: " . $stmt->error)), 400);
+      }
+    }    
+    
     $result = $stmt->get_result();
     $result = $result->fetch_assoc();
     $email = $result["email"];
     $username = $result["username"];
+    $userId = $result["id"];
     send_password_email($userId, $username, $email);
   }
   catch (Exception $e){

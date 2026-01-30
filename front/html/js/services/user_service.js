@@ -45,8 +45,8 @@ class UserService{
     })
   }
   
-  async resetPasswordMail(){
-    return await fetch("https://localhost:4243/profile/reset_password_mail.php", {
+  async resetPasswordMail(username = null){
+    return await fetch(`https://localhost:4243/profile/reset_password_mail.php${username ? "?username="+username : ""}`, {
       method: "GET",
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
