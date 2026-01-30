@@ -22,7 +22,7 @@
   
   try{
     $info = get_info_from_token();
-    $sql = "SELECT id, username, email FROM camagru.users WHERE id = ?";
+    $sql = "SELECT id, username, send_comment_notif, email FROM camagru.users WHERE id = ?";
     $stmt = $conn->prepare($sql);
     if ($stmt->bind_param("i", $info['id']) === false) {
       quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);

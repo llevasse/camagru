@@ -69,12 +69,11 @@
     $email = $result['email'];
     $username = $result['username'];
     $allow = $result['send_comment_notif'];
-    if ($allow == true){
+    if ($allow == 1){
       send_comment_notif(array(["name"=>$username, "email"=>$email]));
     }
     
     $stmt->close();  
-    
     quit(json_encode(array("message"=>"Comment created successfully")));
   }
   catch(mysqli_sql_exception $e){

@@ -9,3 +9,15 @@
 h2{
   text-align: center;
 }
+
+#client-info-container {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  margin: auto;
+  gap: 1em;
+}
+
+#client-info-container label {
+  width: fit-content;
+}

@@ -32,6 +32,7 @@
     if (curl_errno($ch)) {
       throw new Exception(curl_error($ch));
     }
+    echo $result;
   }
     
 ?>

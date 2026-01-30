@@ -15,7 +15,7 @@ class UserService{
       if (value.ok){
         return await value.json().then((obj)=>{
           if (obj){
-            this.client = new User(obj['id'], obj['username'], obj['email']);
+            this.client = new User(obj['id'], obj['username'], obj['email'], obj['send_comment_notif']);
             document.dispatchEvent(new Event("clientCreated"));
             return this.client;
           }
@@ -28,6 +28,21 @@ class UserService{
       }
       return null;
     });
+  }
+  
+  async updateProfile(username, email, commentNotif){
+    const profile = new FormData();
+    profile.append('username', username);
+    profile.append('email', email);
+    profile.append('commentNotif', commentNotif == true ? 1 : 0);
+
+    return await fetch("https://localhost:4243/profile/update.php", {
+      method: "POST",
+      headers : {
+        "Authorization":"Bearer " + localStorage.getItem('token'),
+      },
+      body: profile
+    })
   }
   
   async getClientPosts(){
