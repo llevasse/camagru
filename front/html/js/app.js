@@ -45,6 +45,7 @@ async function load(path = null){
   
   if (routes[path]){
     window.onresize = null;
+    document.onscroll = null;
     document.getElementById("script").remove();
     var s = document.createElement("script");
     s.setAttribute('id', 'script');
