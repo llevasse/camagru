@@ -86,6 +86,12 @@
       if (this.allowMoving){
         this.move = false;
         document.querySelector("#layered-image-container").dispatchEvent(new CustomEvent('movedChild', {'detail':this}));      
+        let parentSize = document.querySelector("#layered-image-container").getBoundingClientRect();
+        let imageSize = this.superposableElement.getBoundingClientRect();
+        if (imageSize.right < parentSize.left || imageSize.top > parentSize.bottom || imageSize.left > parentSize.right || imageSize.bottom < parentSize.top){
+          document.querySelector("#layered-image-container").dispatchEvent(new CustomEvent('removeChild', {'detail':this}));  
+          this.superposableElement.remove();
+        }
       }
     }
     
@@ -505,6 +511,23 @@
         if (detail instanceof SuperposableImageLayered){
           if (this.activeSuperposableImages.at(detail.index)){
             this.activeSuperposableImages[detail.index] = detail;
+          }
+        }
+      })
+      
+      this.layeredImageContainer.addEventListener("removeChild", (event)=>{
+        let detail = event.detail;
+        if (detail instanceof SuperposableImageLayered){
+          if (this.activeSuperposableImages.at(detail.index)){
+            this.activeSuperposableImages.splice(detail.index, 1);
+            let i = 0;
+            this.activeSuperposableImages.forEach((element)=>{
+              element.index = i;
+              i++;
+            })
+            if (this.activeSuperposableImages.length == 0){
+              document.querySelector("#editing-capture").setAttribute('disabled', true);
+            }
           }
         }
       })
