@@ -27,6 +27,7 @@ main{
 
 button{
 	font-family:'monocraft';
+	outline: none;
 }
 
 h1{

@@ -389,9 +389,22 @@
     
     uploadButtonChangeEvent(){
       if (this.uploadButton.files.length !== 0){
-        this.removeStream();
-        this.setImgAsSrc();
-        this.editingImg.src = URL.createObjectURL(this.uploadButton.files[0]);
+        try {
+          let img = new Image();
+          img.onload = function(){
+            this.removeStream();
+            this.setImgAsSrc();
+            this.editingImg.src = URL.createObjectURL(this.uploadButton.files[0]); 
+          }
+          img.onerror = function() {
+            alert("Uploaded image is not valid");
+          };
+          img.src =URL.createObjectURL(this.uploadButton.files[0]);          
+        }
+        catch(e){
+          return;
+        }
+        
       }
     }
     
