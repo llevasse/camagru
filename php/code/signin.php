@@ -33,9 +33,18 @@
   if (!$email){
     quit(json_encode(array("message"=> "No email provided")), 400);
   }
+  if (strlen($email) > 100){
+    quit(json_encode(array("message"=> "Email too long provided")), 400);
+  }
+  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    quit(json_encode(array("message"=> "Invalid email format")), 400);
+  }
   $username = $input['username'];
   if (!$username){
     quit(json_encode(array("message"=> "No username provided")), 400);
+  }
+  if (strlen($username) > 30){
+    quit(json_encode(array("message"=> "username too long provided")), 400);
   }
   $password = $input['password'];
   if (!$password){

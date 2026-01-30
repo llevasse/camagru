@@ -84,7 +84,9 @@
 }
 
 #superposableImageImgContainer{
-  display: flex;
+  display: grid !important;
+  grid-template-columns: auto auto auto auto auto auto;
+  /* gap: 1em; */
   flex-direction: row;
 }
 
@@ -98,6 +100,8 @@
   height: var(--superposable-size);
   /* width: var(--superposable-size); */
   object-fit: contain;
+  /* align-self: center; */
+  justify-items: center;
 }
 
 .layered{
@@ -189,4 +193,5 @@ button:disabled{
 
 h2{
   text-align: center;
+  align-self: center;
 }

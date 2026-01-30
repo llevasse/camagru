@@ -6,15 +6,15 @@ var body = `
     <form id="signin-form" onsubmit="signin(event)" style="display: flex; flex-direction: column;">
       <label>
         <span>Username</span>
-        <input autocomplete="off" name="username" type="text" id="username-input">
+        <input maxlength="30" placeholder="Username..." autocomplete="off" name="username" type="text" id="username-input">
       </label>
       <label>
         <span>Email</span>
-        <input autocomplete="off" name="email" type="email" id="email-input">
+        <input maxlength="100" placeholder="Email..." autocomplete="off" name="email" type="email" id="email-input">
       </label>
       <label>
         <span>Password</span>
-        <input autocomplete="off" name="password" type="password" id="password-input">
+        <input autocomplete="off" placeholder="Password..." name="password" type="password" id="password-input">
       </label>
       <button type="submit">sign in</button>
       <small id="return-value"></small>

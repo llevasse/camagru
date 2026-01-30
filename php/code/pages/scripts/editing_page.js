@@ -391,7 +391,7 @@
       if (this.uploadButton.files.length !== 0){
         try {
           let img = new Image();
-          img.onload = function(){
+          img.onload = ()=>{
             this.removeStream();
             this.setImgAsSrc();
             this.editingImg.src = URL.createObjectURL(this.uploadButton.files[0]); 

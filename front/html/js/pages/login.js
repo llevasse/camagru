@@ -4,7 +4,7 @@ var body = `
   <form autocomplete=off id="login-form" onsubmit="login(event)">
     <label>
       <span>Username</span>
-      <input placeholder="Username..." type="text" id="username-input" autocomplete="off">
+      <input maxlength="30" placeholder="Username..." type="text" id="username-input" autocomplete="off">
     </label>
     <label>
       <span>Password</span>

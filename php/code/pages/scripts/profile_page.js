@@ -7,11 +7,11 @@
     <form id="client-info-container" onsubmit="updateProfile(event)">
       <label>
         <span>Username</span>
-        <input type="text" id="client-username-input">
+        <input maxlength="30" type="text" id="client-username-input">
       </label>
       <label>
         <span>Email</span>
-        <input type="email" id="client-email-input">
+        <input maxlength="100" type="email" id="client-email-input">
       </label>
       <label id="client-comment-notif-label">
         <span>Send mail on new comment</span>

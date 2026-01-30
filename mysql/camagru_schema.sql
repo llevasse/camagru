@@ -52,4 +52,9 @@ CREATE TABLE superposable_images (
 
 INSERT INTO superposable_images (file_path) VALUES
   ('/superposables/Cookie.png'),
-  ('/superposables/CyanParrot.png');
+  ('/superposables/CyanParrot.png'),
+  ('/superposables/Diamond.png'),
+  ('/superposables/HoneyBottle.png'),
+  ('/superposables/Honeycomb.png'),
+  ('/superposables/PotionOfHealing.png'),
+  ('/superposables/RedstoneDust.png');
