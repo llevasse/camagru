@@ -1,6 +1,7 @@
 <?php
   include_once("utils/get_info_from_token.php");
   include_once("exceptions/token_expired.php");
+  include_once("/var/www/php/notifs/comment.php");
   
   ob_start();
   function quit($json, $response_code = 200) {
@@ -51,6 +52,29 @@
       quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
     }
     $stmt->close();  
+    
+    $sql = "SELECT send_comment_notif, username, email FROM camagru.users WHERE id = (SELECT user_id FROM camagru.pictures WHERE id = ?)";
+    $stmt = $conn->prepare($sql);
+    
+    if ($stmt->bind_param("i", $postId) === false) {
+      $stmt->close();  
+      quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);
+    }
+    if ($stmt->execute() === false) {
+      $stmt->close();  
+      quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
+    }
+    $result = $stmt->get_result();
+    $result = $result->fetch_assoc();
+    $email = $result['email'];
+    $username = $result['username'];
+    $allow = $result['send_comment_notif'];
+    if ($allow == true){
+      send_comment_notif(array(["name"=>$username, "email"=>$email]));
+    }
+    
+    $stmt->close();  
+    
     quit(json_encode(array("message"=>"Comment created successfully")));
   }
   catch(mysqli_sql_exception $e){
