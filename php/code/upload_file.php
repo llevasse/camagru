@@ -58,10 +58,10 @@
       foreach (json_decode($superposables, true) as $key => $value) {
         $src = imagecreatefrompng("/var/www/pictures".$value['src']);
         $src = imagescale($src, $value['width'], $value['height']);
+
         imagecopy($dest, $src, $value['x'], $value['y'], 0, 0, $value['width'], imagesy( $src ) );
         
       }
-      // header('Content-Type: image/png');
       imagepng($dest, "/var/www/pictures/$filepath");
     }
     catch(Exception $e){

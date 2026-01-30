@@ -20,7 +20,7 @@
     
     $subject = "Camagru account confirmation"; 
     
-    $htmlContent = "<h3>Confirmation d'inscription</h3><p>Cliquez sur le lien ci-dessous pour confirmer votre compte :</p><a href=\"{{params.confirmationLink}}\">Confirmer mon compte</a>";
+    $htmlContent = "<h3>Sign-in confirmation</h3><p>Click on this link to confirm your account :</p><a href=\"{{params.confirmationLink}}\">Confirm my account</a>";
     
     $params = array("confirmationLink"=> $confirmationLink);
     
