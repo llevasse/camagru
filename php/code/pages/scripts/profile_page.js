@@ -18,6 +18,7 @@
         <input type="checkbox" id="client-comment-notif">
       </label>
       <button type="submit">save</button>
+      <a id="send-reset-password">Send reset password mail</a>
     </form>
     <div id="client-posts-container">
       <h2>Your posts</h2>
@@ -49,9 +50,11 @@
         form.onsubmit = updateProfile;
       }
       
-      let usernameInput = document.querySelector("#client-username-input")
-      let emailInput = document.querySelector("#client-email-input")
-      let commentNotifInput = document.querySelector("#client-comment-notif")
+      let usernameInput = document.querySelector("#client-username-input");
+      let emailInput = document.querySelector("#client-email-input");
+      let commentNotifInput = document.querySelector("#client-comment-notif");
+      
+      let resetPasswordBtn = document.querySelector("#send-reset-password");
       
       userService.getClient().then(client=>{
         if (client instanceof User){
@@ -60,6 +63,12 @@
           commentNotifInput.checked = client.sendCommentNotif == 1;
         }
       });
+      
+      if (resetPasswordBtn instanceof HTMLElement){
+        resetPasswordBtn.onclick = ()=>{
+          userService.resetPasswordMail();
+        }
+      }
       
       
       let postListContainer = document.querySelector("#client-posts-list");

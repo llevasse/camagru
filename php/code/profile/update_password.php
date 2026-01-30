@@ -6,7 +6,7 @@
   try {
     $conn = get_db_conn();
     
-    $info = get_info_from_token();
+    $info = get_info_from_token('EMAIL_SECRET_KEY');
     
     $input = $_POST;
     if (!$_POST || count($_POST) === 0){
@@ -17,24 +17,29 @@
       }
     }
     
-    if (!isset($input['commentNotif']) || !isset($input['username']) || !isset($input['email'])){
+    if (!isset($input['confirmedPassword']) || !isset($input['password'])){
       quit(json_encode(array("message"=> "Not every needed parameters are provided")), 400);
     }
     
     $userId = $info['id'];
-    $comment_notif = $input["commentNotif"];
-    $username = $input["username"];
-    $email = $input["email"];
+    $confirmed_password = $input["confirmedPassword"];
+    $password = $input["password"];
     
-    $sql = "UPDATE camagru.users SET send_comment_notif=?, username=?, email=? WHERE id=?";
+    if (strcmp($password, $confirmed_password) !== 0){
+      quit(json_encode(array("message"=> "Passwords do not match")), 400);
+    }
+    
+    $password = password_hash($input['password'], PASSWORD_DEFAULT);
+    
+    $sql = "UPDATE camagru.users SET password_hash=? WHERE id=?";
     $stmt = $conn->prepare($sql);    
-    if ($stmt->bind_param("issi", $comment_notif, $username, $email, $userId) === false) {
+    if ($stmt->bind_param("si", $password, $userId) === false) {
       quit(json_encode(array("message"=> "SQL params binding failed: " . $stmt->error)), 400);
     }
     if ($stmt->execute() === false) {
       quit(json_encode(array("message"=> "SQL excute failed: " . $stmt->error)), 400);
     }
-    quit(json_encode(array("message"=> "Profile updated successfully")), 200);
+    quit(json_encode(array("message"=> "Password updated successfully")), 200);
   }
   catch (Exception $e) {
     quit(array("message"=> $e->getMessage()), 400);

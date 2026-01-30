@@ -45,6 +45,41 @@ class UserService{
     })
   }
   
+  async resetPasswordMail(){
+    return await fetch("https://localhost:4243/profile/reset_password_mail.php", {
+      method: "GET",
+      headers : {
+        "Authorization":"Bearer " + localStorage.getItem('token'),
+      },
+    })
+  }
+  
+  async changePassword(password, confirmedPassword, token){
+    const form = new FormData();
+    form.append('password', password);
+    form.append('confirmedPassword', confirmedPassword);
+    return await fetch("https://localhost:4243/profile/update_password.php", {
+      method: "POST",
+      headers: {
+        "Authorization":"Bearer " + token,
+      },
+      body: form
+    }).then(async (value)=>{
+      return await value.json().then((obj)=>{
+        var message = "";
+        if (obj['message']){
+          message = obj['message'];
+          if (value.ok){
+            return null;
+          }
+        }
+        else
+          message = JSON.stringify(obj);
+        return message;
+      })
+    });
+  }
+  
   async getClientPosts(){
     return await fetch("https://localhost:4243/get_client_posts.php", {
       method: "GET",
