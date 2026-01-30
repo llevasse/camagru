@@ -50,8 +50,8 @@
     if ($stmt->execute() === false) {
       quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
     }
-    send_confirmation_email($stmt->insert_id, $email);
-    quit(json_encode(array("message"=>"User created successfully", 'return'=>$result)));
+    send_confirmation_email($stmt->insert_id, $email, $username);
+    // quit(json_encode(array("message"=>"User created successfully", 'return'=>$result)));
   }
   catch(mysqli_sql_exception $e){
     $message = $e->getMessage();

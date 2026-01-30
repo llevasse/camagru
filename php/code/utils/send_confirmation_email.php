@@ -1,7 +1,7 @@
 <?php
   include_once("/var/www/php/jwt.php");
 
-  function send_confirmation_email($userId, $userEmail ) {
+  function send_confirmation_email($userId, $userEmail, $username ) {
     $jwtCtrl = new Jwt($_ENV['EMAIL_SECRET_KEY']);
     
     $exp = time() + 1*24*60*60;
@@ -11,23 +11,43 @@
         "exp"=> $exp,
       ]);
     $confirmationLink = $_ENV['FRONTEND_URL'] . '/confirm-email?token=' . $token;
-    $to = $userEmail;
-    $subject = "Camagru account confirmation";
-    $message = `
-        <h3>Confirmation d'inscription</h3>
-        <p>Cliquez sur le lien ci-dessous pour confirmer votre compte :</p>
-        <a href="` . $confirmationLink . `">Confirmer mon compte</a>
-    `;
     
-    // To send HTML mail, the Content-type header must be set
-    $headers[] = 'MIME-Version: 1.0';
-    $headers[] = 'Content-type: text/html; charset=iso-8859-1';
+    $API_KEY = $_ENV['BREVO_API_KEY'];
+    
+    $sender = array("name"=>"Camagru", "email"=>"elise.levasse@gmail.com");
+    
+    $to = array(["name"=> $username, "email"=> $userEmail]);
+    
+    $subject = "Camagru account confirmation"; 
+    
+    $htmlContent = "<h3>Confirmation d'inscription</h3><p>Cliquez sur le lien ci-dessous pour confirmer votre compte :</p><a href=\"{{params.confirmationLink}}\">Confirmer mon compte</a>";
+    
+    $params = array("confirmationLink"=> $confirmationLink);
+    
+    $ch = curl_init("https://api.brevo.com/v3/smtp/email");
+    
+    $postField = array(
+        "sender"=>$sender,
+        "to"=>$to,
+        "subject"=>$subject,
+        "params"=>$params,
+        "htmlContent"=>$htmlContent
+    );
+    
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postField));
 
-    // Additional headers
-    $headers[] = 'To: <'.$userEmail.'>';
-    $headers[] = 'From: Camagru <confirmation@camagru.com>';
+    $headers = array();
+    $headers[] = 'Accept: application/json';
+    $headers[] = 'Api-Key: '.$API_KEY;
+    $headers[] = 'Content-Type: application/json';
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    
 
-    // Mail it
-    mail($to, $subject, $message, implode("\r\n", $headers));
+    $result = curl_exec($ch);
+    if (curl_errno($ch)) {
+      throw new Exception(curl_error($ch));
+    }
   }
 ?>
