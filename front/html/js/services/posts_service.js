@@ -2,8 +2,8 @@ class PostsService{
   constructor(){
   }
 
-  async getPosts(){
-    return await fetch("https://localhost:4243/get_feed_images.php", {
+  async getPosts(offset = 0){
+    return await fetch(`https://localhost:4243/get_feed_images.php?offset=${offset}`, {
       method: "GET",
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),

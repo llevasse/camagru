@@ -22,7 +22,7 @@ var body = `
           let likedByClient = value['likes_from_client'];
           if (path && id && username && uploadTime && likes != undefined && likedByClient != undefined){
             let post = new CamagruPost(id, path, username, uploadTime, comments, likes, likedByClient);
-            postListContainer.insertBefore(post.toHtmlElement(), postListContainer.firstChild);
+            postListContainer.appendChild(post.toHtmlElement());
           }
         })
       })
