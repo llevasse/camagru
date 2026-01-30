@@ -1,4 +1,6 @@
 <?php
+  include_once("/var/www/php/utils/send_confirmation_email.php");
+  
   ob_start();
   function quit($json, $response_code = 200) {
     ob_clean();
@@ -48,7 +50,8 @@
     if ($stmt->execute() === false) {
       quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
     }
-    quit(json_encode(array("message"=>"User created successfully")));
+    send_confirmation_email($stmt->insert_id, $email);
+    quit(json_encode(array("message"=>"User created successfully", 'return'=>$result)));
   }
   catch(mysqli_sql_exception $e){
     $message = $e->getMessage();
