@@ -49,3 +49,17 @@ form{
     width: fit-content;
   }
 }
+
+#login-form, #signin-form{
+  button{
+    transition: 300ms;
+    border: .2em solid var(--color-one);
+    background-color: var(--color-foor);
+    color: var(--color-one);
+  }
+  button:hover{
+    background-color: var(--color-one);
+    border-color: var(--color-foor);
+    color: var(--color-foor);
+  }
+}

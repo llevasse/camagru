@@ -1,14 +1,14 @@
 var body = `
   <h1>Camagru</h1>
   <link id="style" rel="stylesheet" href="/css/form.css">
-  <form autocomplete=on id="login-form" onsubmit="login(event)">
+  <form autocomplete=off id="login-form" onsubmit="login(event)">
     <label>
       <span>Username</span>
-      <input placeholder="Username..." type="text" id="username-input" autocomplete="username">
+      <input placeholder="Username..." type="text" id="username-input" autocomplete="off">
     </label>
     <label>
       <span>Password</span>
-      <input placeholder="Password..." type="password" id="password-input" autocomplete>
+      <input placeholder="Password..." type="password" id="password-input" autocomplete="off">
     </label>
     <button type="submit">Login</button>
     <small id="return-value"></small>

@@ -16,8 +16,62 @@ h2{
   width: fit-content;
   margin: auto;
   gap: 1em;
+  background: var();
 }
 
 #client-info-container label {
-  width: fit-content;
+  width: 100%;
+  /* padding: 0 0.5em; */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
+
+#client-info-container label input {
+  width: 100%;
+  /* margin: 0 .2em; */
+  box-sizing: border-box;
+  padding: .2em;
+  border: .2em solid var(--color-one);
+  background: var(--color-foor);
+  /* font-family: 'monocraft'; */
+  outline: none;
+}
+
+label#client-comment-notif-label {
+  flex-direction: row;
+}
+
+input#client-comment-notif {
+  flex: 0;
+}
+
+#save-btn {
+  padding: 1em 2em;
+  background: var(--color-foor);
+  align-self: center;
+  border: .2em solid var(--color-one);
+  color: var(--color-one);
+  width: -webkit-fill-available;
+  margin: 0 .2em;
+  transition: 300ms;
+}
+
+#send-reset-password {
+  align-self: center;
+  font-size: 0.8em;
+  opacity: 0.5;
+  text-decoration: underline;
+  transition: 300ms;
+}
+
+#send-reset-password:hover {
+  font-size: 1em;
+  opacity: 1;
+}
+
+#save-btn:hover {
+  background: var(--color-one);
+  color: var(--color-foor);
+}
+

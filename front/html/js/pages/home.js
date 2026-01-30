@@ -34,7 +34,6 @@ var body = `
       if (response instanceof Response && response.ok){
         response.json().then(obj=>{
           shouldIKeepGoing = obj.length == 5;
-          console.log(obj.length);
           Object.values(obj).forEach(value=>{
             let path = value['path'];
             let id = value['id'];

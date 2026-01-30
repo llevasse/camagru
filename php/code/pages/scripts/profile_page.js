@@ -13,11 +13,11 @@
         <span>Email</span>
         <input type="email" id="client-email-input">
       </label>
-      <label>
+      <label id="client-comment-notif-label">
         <span>Send mail on new comment</span>
         <input type="checkbox" id="client-comment-notif">
       </label>
-      <button type="submit">save</button>
+      <button id="save-btn" type="submit">save</button>
       <a id="send-reset-password">Send reset password mail</a>
     </form>
     <div id="client-posts-container">
@@ -76,10 +76,8 @@
         if (response instanceof Response && response.ok){
           response.json().then(obj=>{
             Object.values(obj).forEach(value=>{
-              console.log(value);
               let path = value['path'];
               let id = value['id'];
-              let username = value['username'];
               let uploadTime = value['uploaded_at'];
               let comments = value['comments'];
               let likes= value['likes'];

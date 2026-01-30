@@ -143,13 +143,22 @@
   padding: 0.5em;
   border: 0.2em solid var(--color-one);
   background: var(--color-foor);
-  border-radius: 1em;
+  transition: 300ms;
+  /* border-radius: 1em; */
 }
 
 .delete-post-btn img{
   mask: url(/assets/bin.svg);
+  transition: 300ms;
   mask-size: 1.5em;
   width: 1.5em;
   height: 1.5em;
   background: var(--color-one);
+}
+
+.delete-post-btn:hover{
+  background-color: var(--color-one) !important;
+  img{
+    background-color: var(--color-foor);
+  }
 }
