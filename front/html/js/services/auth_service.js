@@ -58,5 +58,28 @@ class AuthService{
       })
     });
   }
+  
+  async comfirm(token){
+    return await fetch("https://localhost:4243/confirm_account.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization":"Bearer " + token,
+      },
+    }).then(async (value)=>{
+      return await value.json().then((obj)=>{
+        var message = "";
+        if (obj['message']){
+          message = obj['message'];
+          if (value.ok){
+            return null;
+          }
+        }
+        else
+          message = JSON.stringify(obj);
+        return message;
+      })
+    });
+  }
 }
 

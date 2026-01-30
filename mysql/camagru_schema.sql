@@ -12,6 +12,8 @@ CREATE TABLE users (
   password_hash VARCHAR(255) NOT NULL,
   is_confirmed BOOLEAN DEFAULT FALSE,
   is_admin BOOLEAN DEFAULT FALSE,
+  send_like_notif BOOLEAN DEFAULT TRUE,
+  send_comment_notif BOOLEAN DEFAULT TRUE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

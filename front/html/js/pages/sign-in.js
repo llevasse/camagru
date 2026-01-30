@@ -36,6 +36,7 @@ async function signin(event){
   
   const error = await authService.signin(username_input.value, email_input.value, password_input.value);
   if (!error){
+    return_value.innerHTML = "Account created, check your emails to confirm your account"
     // await authService.login(username_input.value, password_input.value);
     // myPushState("https://localhost:4243/");
   }

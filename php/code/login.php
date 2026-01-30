@@ -50,6 +50,9 @@
     if (password_verify($password, $result['password_hash']) == false){
       quit(json_encode(array("message"=>"Incorrect password")), 400);
     }
+    if ($result['is_confirmed'] == false){
+      quit(json_encode(array("message"=>"Account is not confirmed")), 400);
+    }
     $jwtCtrl = new Jwt($_ENV['JWT_SECRET_KEY']);
     $exp = time() + 1*24*60*60;
     quit(json_encode([
