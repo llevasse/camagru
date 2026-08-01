@@ -1,5 +1,6 @@
 <?php
   include_once("/var/www/php/jwt.php");
+  include_once("/var/www/php/utils/log.php");
 
   function send_confirmation_email($userId, $userEmail, $username ) {
     $jwtCtrl = new Jwt($_ENV['EMAIL_SECRET_KEY']);
@@ -11,6 +12,7 @@
         "exp"=> $exp,
       ]);
     $confirmationLink = $_ENV['FRONTEND_URL'] . '/confirm-email?token=' . $token;
+		stdoutLog("Confirmation email for user '".$username."' : ".$confirmationLink);
     
     $API_KEY = $_ENV['BREVO_API_KEY'];
     
