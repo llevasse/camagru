@@ -1,7 +1,7 @@
 .post {
-  width: 30vw;
+  width: 50vw;
   
-  max-width: 30vw;
+  min-width: 30vw;
   padding: 1em;
   background: var(--color-foor);
   border-radius: 1em;
@@ -43,7 +43,7 @@
 .comment-input-container button{
   transition: 300ms;
   width: fit-content;
-  height: -webkit-fill-available;
+  /* height: -webkit-fill-available; */
   
   display: flex;
   flex-direction: row;
@@ -161,4 +161,9 @@
   img{
     background-color: var(--color-foor);
   }
+}
+
+.comment-username {
+  font-style: italic;
+  opacity: 0.6;
 }
