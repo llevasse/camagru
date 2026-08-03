@@ -23,6 +23,9 @@ body{
 
 main{
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 button{
@@ -119,3 +122,10 @@ input {
 textarea {
   font-family: 'monocraft';
 }
+
+#error-page-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+

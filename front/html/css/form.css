@@ -6,7 +6,6 @@ form{
   gap: 1em;
   padding: 1em;
   
-  justify-self: center;
   align-items: center;
   color: var(--color-two);
   
@@ -14,18 +13,15 @@ form{
   
   box-shadow: .5em .5em .3em var(--color-two);
   
-  /* margin: 10rem; */
-  
   label{
-    width: fit-content;
+    width: 100%;
     display: flex;
     flex-direction: column;
     
   }
   input{
-    width: max-content;
     padding: .5em;
-    margin: 0.5em 1em 0;
+    margin: 0.5em 0;
     box-sizing: border-box;
     background: var(--color-foor);
     border: 0;
@@ -40,8 +36,8 @@ form{
     font-size: 1.5rem;
     border-radius: .6em;
     padding: .6rem;
-    margin: 1rem 1rem 0 1rem;
-    box-sizing: content-box;
+    /* margin: 1rem 1rem 0 1rem;
+    box-sizing: content-box; */
     color: var(--color-two);
   }
   
@@ -62,13 +58,13 @@ form{
   }
 
   #send-reset-password:hover {
-    font-size: 1em;
+    /* font-size: 1em; */
     opacity: 1;
   }
 
   button{
     transition: 300ms;
-    border: .2em solid var(--color-one);
+    border: .2em solid var(--color-foor);
     background-color: var(--color-foor);
     color: var(--color-one);
   }
