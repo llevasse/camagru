@@ -1,14 +1,10 @@
 <?php
   include_once("/var/www/php/jwt.php");
   include_once("/var/www/php/utils/get_info_from_token.php");
+  include_once("/var/www/php/utils/quit.php");
   include_once("/var/www/php/exceptions/token_expired.php");
 
   ob_start();
-  function quit($json, $response_code = 200) {
-    // ob_clean();
-    http_response_code($response_code);
-    die($json);
-  }
   
   try{
     $info = get_info_from_token();

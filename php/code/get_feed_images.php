@@ -10,11 +10,8 @@
   $userId = null;
   
   try{
-    $info = get_info_from_token();
+    $info = get_info_from_token('JWT_SECRET_KEY', false);
     $userId = $info['id'];
-  }
-  catch(TokenExpired $e){
-    quit(json_encode(["message"=> "Token expired"]), 400);
   }
   catch(Exception $e) {
   }
