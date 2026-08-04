@@ -11,7 +11,12 @@
   }
 
   try{
-    $info = get_info_from_token();
+		try{
+			$info = get_info_from_token();
+		}
+		catch (InvalidArgumentException){
+			quit('Invalid token', 403);
+		}
   
     $db_password = ($_ENV['DB_PASSWORD']);
     $db_user = ($_ENV['DB_USER']);

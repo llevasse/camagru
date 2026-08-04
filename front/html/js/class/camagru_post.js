@@ -110,14 +110,18 @@ class CamagruPost{
   }
   
   _sendComment(comment){
-    if (comment.trim().length > 0){
-      postsService.sendComment(this.id, comment.trim());
-      if (this.commentInputElement instanceof HTMLTextAreaElement && this.commentsContainer instanceof HTMLDivElement){
-        this.commentInputElement.value = "";
-        let client = userService.client;
-        if (client instanceof User)
-        this.commentsContainer.appendChild(this._createCommentContainer(comment, client.username))
-      }
+		const commentTrimmed = comment.trim();
+    if (commentTrimmed.length > 0){
+      postsService.sendComment(this.id, commentTrimmed).then((response) => {
+				if (response.ok){
+					if (this.commentInputElement instanceof HTMLTextAreaElement && this.commentsContainer instanceof HTMLDivElement){
+						this.commentInputElement.value = "";
+						let client = userService.client;
+						if (client instanceof User)
+						this.commentsContainer.appendChild(this._createCommentContainer(commentTrimmed, client.username))
+					}
+				}
+			});
     } 
   }
   
