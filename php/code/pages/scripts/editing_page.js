@@ -279,7 +279,7 @@
       <div id="editing-main-div">
         <div id="editing-video-n-buttons-container">
           <div id="editing-video-container">
-            <video id="editing-video"></video>
+            <video disablepictureinpicture="true" id="editing-video"></video>
             <img id="editing-video-img"></img>
             <div id="layered-image-container"></div>
           </div>

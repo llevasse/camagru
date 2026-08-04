@@ -26,6 +26,7 @@
   display: flex;
   flex-direction: row;
   border-top: .2em solid var(--color-one);
+  background: transparent;
 }
 
 .comment-input{
@@ -38,12 +39,12 @@
   border-radius: 0.5em 0 0 0.5em;
   outline: none;
   resize: none;
+  overflow: auto;
 }
 
 .comment-input-container button{
   transition: 300ms;
   width: fit-content;
-  /* height: -webkit-fill-available; */
   
   display: flex;
   flex-direction: row;
@@ -54,8 +55,7 @@
   
   padding: .5rem;
   gap: .5rem;
-  /* padding: 0 1em; */
-  background-color: var(--color-foor);
+  background: transparent;
 }
 
 .comment-input-container button:hover{
@@ -110,6 +110,7 @@
   flex-direction: column;
   border: .2em solid var(--color-one);
   border-radius: 0 0 .5em .5em;
+  background-color: var(--color-foor);
 }
 
 .comments-container p {
