@@ -1,5 +1,5 @@
 <?php
-  include_once("/var/www/php/exceptions/token_expired.php");
+  include_once("exceptions/token_expired.php");
   class Jwt{    
   
     public function __construct(private string $key){}

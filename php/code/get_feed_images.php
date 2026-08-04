@@ -1,13 +1,9 @@
 <?php
-  include_once("/var/www/php/jwt.php");
-  include_once("/var/www/php/utils/get_info_from_token.php");
-  include_once("/var/www/php/exceptions/token_expired.php");
-  include_once("/var/www/php/utils/get_db_conn.php");
-  function quit($json, $response_code = 200) {
-    ob_clean();
-    http_response_code($response_code);
-    die($json);
-  }
+  include_once("jwt.php");
+  include_once("utils/get_info_from_token.php");
+  include_once("utils/quit.php");
+  include_once("exceptions/token_expired.php");
+  include_once("utils/get_db_conn.php");
   
   
   ob_start();
@@ -25,10 +21,6 @@
   
   try{
     $conn = get_db_conn();
-  
-    if ($conn->connect_error) {
-      quit(json_encode(array("message"=> "Connection failed: " . $conn->connect_error)), 400);
-    } 
     
     $conn->select_db("camagru");
     
