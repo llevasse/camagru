@@ -9,7 +9,7 @@ class UserService{
 		const token = localStorage.getItem('token');
 		if (token == null) return;
 
-    return await fetch("https://localhost:4243/profile.php", {
+    return await fetch("/profile.php", {
       method: "GET",
       headers : {
         "Authorization":"Bearer " + token,
@@ -39,7 +39,7 @@ class UserService{
     profile.append('email', email);
     profile.append('commentNotif', commentNotif == true ? 1 : 0);
 
-    return await fetch("https://localhost:4243/profile/update.php", {
+    return await fetch("/profile/update.php", {
       method: "POST",
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
@@ -49,7 +49,7 @@ class UserService{
   }
   
   async resetPasswordMail(username = null){
-    return await fetch(`https://localhost:4243/profile/reset_password_mail.php${username ? "?username="+username : ""}`, {
+    return await fetch(`/profile/reset_password_mail.php${username ? "?username="+username : ""}`, {
       method: "GET",
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
@@ -61,7 +61,7 @@ class UserService{
     const form = new FormData();
     form.append('password', password);
     form.append('confirmedPassword', confirmedPassword);
-    return await fetch("https://localhost:4243/profile/update_password.php", {
+    return await fetch("/profile/update_password.php", {
       method: "POST",
       headers: {
         "Authorization":"Bearer " + token,
@@ -84,7 +84,7 @@ class UserService{
   }
   
   async getClientPosts(){
-    return await fetch("https://localhost:4243/get_client_posts.php", {
+    return await fetch("/get_client_posts.php", {
       method: "GET",
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),

@@ -29,7 +29,7 @@
  
     
     constructor(){
-      history.replaceState("","","https://localhost:4243/profile")
+      history.replaceState("","","/profile")
       document.getElementById("container").innerHTML = this.body;
       
       async function updateProfile(event){

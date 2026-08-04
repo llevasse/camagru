@@ -17,7 +17,7 @@ var body = `
 `
 
 {
-  history.replaceState("","","https://localhost:4243/login")
+  history.replaceState("","","/login")
 	document.getElementById("container").innerHTML = body;
 	localStorage.removeItem("token");
   
@@ -39,7 +39,7 @@ async function login(event){
   
   const error = await authService.login(username_input.value, password_input.value);
   if (!error){
-    myPushState("https://localhost:4243/");
+    myPushState("/");
   }
   else {
     return_value.innerHTML = error;

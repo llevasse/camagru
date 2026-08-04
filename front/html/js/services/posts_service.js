@@ -3,7 +3,7 @@ class PostsService{
   }
 
   async getPosts(offset = 0){
-    return await fetch(`https://localhost:4243/get_feed_images.php?offset=${offset}`, {
+    return await fetch(`/get_feed_images.php?offset=${offset}`, {
       method: "GET",
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
@@ -29,7 +29,7 @@ class PostsService{
     const form = new FormData();
     form.append('post_id', postId);
 
-    return await fetch("https://localhost:4243/like_post.php", {
+    return await fetch("/like_post.php", {
       method: "POST",
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
@@ -42,7 +42,7 @@ class PostsService{
     const form = new FormData();
     form.append('post_id', postId);
 
-    return await fetch("https://localhost:4243/unlike_post.php", {
+    return await fetch("/unlike_post.php", {
       method: "POST",
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
@@ -58,7 +58,7 @@ class PostsService{
     }
     const form = new FormData();
     form.append('url', url);
-    return fetch(`https://localhost:4243/delete_file.php`, {
+    return fetch(`/delete_file.php`, {
       method: 'POST',
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),

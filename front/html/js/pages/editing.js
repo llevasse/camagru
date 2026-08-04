@@ -1,5 +1,5 @@
 {
-  fetch("https://localhost:4243/pages/editing_page.php", {
+  fetch("/pages/editing_page.php", {
     headers : {"Authorization":"Bearer " + localStorage.getItem('token')}
   }).then(response=>{
     response.text().then((script)=>{

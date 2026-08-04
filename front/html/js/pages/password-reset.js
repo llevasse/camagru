@@ -30,7 +30,7 @@ var body = `
       
       const error = await userService.changePassword(password_input.value, confirm_password_input.value, token);
       if (!error){
-        myPushState("https://localhost:4243/");
+        myPushState("/");
       }
       else {
         return_value.innerHTML = error;

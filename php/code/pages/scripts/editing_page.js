@@ -499,7 +499,7 @@
     }
     
     constructor(){
-      history.replaceState("","","https://localhost:4243/editing")
+      history.replaceState("","","/editing")
       document.getElementById("container").innerHTML = this.body;
       
       this.editingContainer = document.querySelector("#editing-container");

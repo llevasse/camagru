@@ -8,7 +8,7 @@ class EditingService{
     form.append('photo', photo);
     form.append('superposables', superposables);
     form.append('imgSize', imgSize);
-    return fetch(`https://localhost:4243/upload_file.php`, {
+    return fetch(`/upload_file.php`, {
       method: 'POST',
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
@@ -24,7 +24,7 @@ class EditingService{
     }
     const form = new FormData();
     form.append('url', url);
-    return fetch(`https://localhost:4243/delete_file.php`, {
+    return fetch(`/delete_file.php`, {
       method: 'POST',
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
@@ -38,7 +38,7 @@ class EditingService{
       console.error("Need to be logged to get pictures");
       return null;
     }
-    return fetch(`https://localhost:4243/get_user_images.php`, {
+    return fetch(`/get_user_images.php`, {
       method: 'GET',
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
@@ -51,7 +51,7 @@ class EditingService{
       console.error("Need to be logged to get pictures");
       return null;
     }
-    return fetch(`https://localhost:4243/get_superposable_images.php`, {
+    return fetch(`/get_superposable_images.php`, {
       method: 'GET',
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),

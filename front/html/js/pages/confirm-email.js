@@ -5,7 +5,7 @@
 	if (token){
     authService.comfirm(token).then(error=>{
       if (!error){
-        myPushState("https://localhost:4243/login");
+        myPushState("/login");
       }
     });
 	}
