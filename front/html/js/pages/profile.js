@@ -1,5 +1,5 @@
 {
-  fetch("/pages/profile_page.php", {
+  myFetch("/pages/profile_page.php", {
     headers : {"Authorization":"Bearer " + localStorage.getItem('token')}
   }).then(response=>{
     response.text().then((script)=>{

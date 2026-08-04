@@ -63,3 +63,10 @@ function myPushState(url) {
 	history.pushState("", "", url);
 	load();
 }
+
+function myFetch(source, options) {
+	return fetch(source, options).then((response) => {
+		if(response.status == 401) authService.logout();
+		return response;
+	});
+}

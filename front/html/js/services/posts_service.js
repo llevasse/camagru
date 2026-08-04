@@ -3,7 +3,7 @@ class PostsService{
   }
 
   async getPosts(offset = 0){
-    return await fetch(`/get_feed_images.php?offset=${offset}`, {
+    return await myFetch(`/get_feed_images.php?offset=${offset}`, {
       method: "GET",
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
@@ -16,7 +16,7 @@ class PostsService{
     comment.append('post_id', postId);
     comment.append('comment_content', commentContent);
 
-    return fetch("/send_comment.php", {
+    return myFetch("/send_comment.php", {
       method: "POST",
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
@@ -29,7 +29,7 @@ class PostsService{
     const form = new FormData();
     form.append('post_id', postId);
 
-    return await fetch("/like_post.php", {
+    return await myFetch("/like_post.php", {
       method: "POST",
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
@@ -42,7 +42,7 @@ class PostsService{
     const form = new FormData();
     form.append('post_id', postId);
 
-    return await fetch("/unlike_post.php", {
+    return await myFetch("/unlike_post.php", {
       method: "POST",
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
@@ -52,13 +52,9 @@ class PostsService{
   }
   
   async deletePost(url){
-    if (localStorage.getItem('token') == null){
-      console.error("Need to be logged to delete pictures");
-      return null;
-    }
     const form = new FormData();
     form.append('url', url);
-    return fetch(`/delete_file.php`, {
+    return myFetch(`/delete_file.php`, {
       method: 'POST',
       headers : {
         "Authorization":"Bearer " + localStorage.getItem('token'),
