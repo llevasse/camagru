@@ -7,7 +7,7 @@
   ob_start();
   
   try{
-    $info = get_info_from_token();
+    $info = get_info_from_token('JWT_SECRET_KEY', false);
     http_response_code(200);
     die(file_get_contents('/var/www/php/pages/scripts/editing_page.js'));
   }

@@ -6,10 +6,13 @@ class UserService{
   }
 
   async getClient(){
+		const token = localStorage.getItem('token');
+		if (token == null) return;
+
     return await fetch("https://localhost:4243/profile.php", {
       method: "GET",
       headers : {
-        "Authorization":"Bearer " + localStorage.getItem('token'),
+        "Authorization":"Bearer " + token,
       }
     }).then(async (value)=>{
       if (value.ok){
