@@ -8,6 +8,12 @@
   position: relative;
 }
 
+@media (width > 960px) {
+	.post {
+		width: 30vw;
+	}
+}
+
 .post-info-container {
   display: flex;
   justify-content: space-between;
