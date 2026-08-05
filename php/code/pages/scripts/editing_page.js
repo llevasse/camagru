@@ -282,6 +282,7 @@
             <video disablepictureinpicture="true" id="editing-video"></video>
             <img id="editing-video-img"></img>
             <div id="layered-image-container"></div>
+            <span id="webcamDisabledMessage">Your webcam access is forbiden, change your permissions settings to use the webcam.</span>
           </div>
           <div id="editing-video-buttons-container">
             <button class="media-selector-buttons video-off" id="video-permissions-button">
@@ -322,6 +323,7 @@
     permsisionButton;
     uploadButton;
     saveButton;
+    webcamDisabledMessage;
     
     focusSource;
       
@@ -383,6 +385,7 @@
       if (!this.focusSource.classList.contains("focusSource")){
         this.focusSource.classList.add("focusSource");
       }
+      this.webcamDisabledMessage.className = '';
       this.resizeEvent(null, null);
       this.clearSelectedSuperposableImages();
     }
@@ -463,14 +466,17 @@
         navigator.mediaDevices
         .getUserMedia({ video: true, audio: false })
         .then((stream) => {
-          document.getElementById("editing-video").srcObject = stream;
+		      this.webcamDisabledMessage.className = '';
+					document.getElementById("editing-video").srcObject = stream;
           document.getElementById("editing-video").play();
           
           this.toggleVideoButtonClass();
           this.setVideoAsSrc();
         })
         .catch((err) => {
-          console.error(`An error occurred: ${err}`);
+          this.setVideoAsSrc();
+      		this.video.classList.remove('active');
+      		this.webcamDisabledMessage.className = 'active';
         });
       }
     }
@@ -513,6 +519,7 @@
       this.saveButton = document.getElementById("save-photo-button");
       this.uploadButton = document.getElementById("editing-upload-button");
       this.layeredImageContainer = document.querySelector("#layered-image-container");
+      this.webcamDisabledMessage = document.querySelector("#webcamDisabledMessage");      
       
       this.layeredImageContainer.addEventListener("newChild", (event)=>{
         this.activeSuperposableImages.push(event.detail);

@@ -62,7 +62,7 @@
     object-fit: contain;
   }
 }
-#editing-video-img, #editing-video{
+#editing-video-img, #editing-video, #webcamDisabledMessage{
   display: none;
 }
 
@@ -75,11 +75,7 @@
   min-height: 50dvh;
 }
 
-#editing-video-img.active{
-  display: block;
-}
-
-#editing-video.active{
+#editing-video-img.active, #editing-video.active, #webcamDisabledMessage.active{
   display: block;
 }
 
