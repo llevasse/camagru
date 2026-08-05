@@ -353,35 +353,18 @@
       return 0
     }
     
-    setVideoAsSrc(){
+    toggleSrc(){
       if (this.focusSource && this.focusSource.classList.contains("focusSource")){
         this.focusSource.classList.remove("focusSource");
       }
-      if (this.editingImg.classList.contains("active")){
-        this.editingImg.classList.remove("active");
-      }
-      if (!this.video.classList.contains("active")){
-        this.video.classList.add("active");
-      }
-      this.focusSource = this.video;
-      if (!this.focusSource.classList.contains("focusSource")){
-        this.focusSource.classList.add("focusSource");
-      }
-      this.resizeEvent(null, null);
-      this.clearSelectedSuperposableImages();
-    }
-  
-    setImgAsSrc(){
-      if (this.focusSource && this.focusSource.classList.contains("focusSource")){
-        this.focusSource.classList.remove("focusSource");
-      }
-      if (this.video.classList.contains("active")){
-        this.video.classList.remove("active");
-      }
-      if (!this.editingImg.classList.contains("active")){
-        this.editingImg.classList.add("active");
-      }
-      this.focusSource = this.editingImg;
+      const activeElement = this.video.classList.contains('active') ? this.video : this.editingImg;
+      const inactiveElement  = !this.video.classList.contains('active') ? this.video : this.editingImg;
+      
+      activeElement.classList.remove('active');
+      
+      if (!inactiveElement.classList.contains('active')) inactiveElement.classList.add('active');
+      
+      this.focusSource = inactiveElement;
       if (!this.focusSource.classList.contains("focusSource")){
         this.focusSource.classList.add("focusSource");
       }
@@ -396,7 +379,7 @@
           let img = new Image();
           img.onload = ()=>{
             this.removeStream();
-            this.setImgAsSrc();
+            this.toggleSrc();
             this.editingImg.src = URL.createObjectURL(this.uploadButton.files[0]); 
           }
           img.onerror = function() {
@@ -458,7 +441,7 @@
     permsisionButtonClickEvent(){
       if(this.removeStream()) {
         if (this.editingImg.files && this.editingImg.files.length !== 0){
-          this.setImgAsSrc();
+          this.toggleSrc();
         }
         this.video.classList.remove("active");
       }
@@ -471,10 +454,10 @@
           document.getElementById("editing-video").play();
           
           this.toggleVideoButtonClass();
-          this.setVideoAsSrc();
+          this.toggleSrc();
         })
         .catch((err) => {
-          this.setVideoAsSrc();
+          this.toggleSrc();
       		this.video.classList.remove('active');
       		this.webcamDisabledMessage.className = 'active';
         });
@@ -557,7 +540,7 @@
         if (editedImage instanceof EditedImage){
           this.clearSelectedSuperposableImages();
           this.removeStream();
-          this.setImgAsSrc();
+          this.toggleSrc();
           this.editingImg.src = editedImage.finalImageDataUrl;
           let clonedSuperposables = editedImage.superposableImages.slice();
           clonedSuperposables.forEach((element)=>{
