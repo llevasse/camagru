@@ -48,16 +48,24 @@
       $superposables = $_POST["superposables"];
       $dest = imagecreatefrompng("/var/www/pictures/$filepath");
       $size = json_decode($_POST['imgSize']);
-      $width = $size->width;
-      $height = $size->height;
+      $width = intval($size->width);
+      $height = intval($size->height);
       
       $dest = imagescale($dest, $width, $height);
       foreach (json_decode($superposables, true) as $key => $value) {
+				$scaledW = intval($value['width']);
+				$scaledH = intval($value['height']);
+				$copyToX = intval($value['x']);
+				$copyToY = intval($value['y']);
+				
         $src = imagecreatefrompng("/var/www/pictures".$value['src']); // TODO handle error opening image.
-        $src = imagescale($src, $value['width'], $value['height']);
+        $srcWidth = imagesx($src);
+        $srcHeight = imagesy($src);
 
-        imagecopy($dest, $src, $value['x'], $value['y'], 0, 0, $value['width'], imagesy( $src ) );
-        
+				// Copy superposable image to base image,
+				// at $copyToX and $copyToY coordinate,
+				// and resize superposable image from $srcWidth and $srcHeight to $scaledW and $scaledH
+        imagecopyresampled($dest, $src, $copyToX, $copyToY, 0, 0, $scaledW, $scaledH, $srcWidth, $srcHeight );
       }
       imagepng($dest, "/var/www/pictures/$filepath");
     }
@@ -85,7 +93,6 @@
       if ($stmt->execute() === false) {
         quit(json_encode(array("message"=> "SQL execute failed: " . $stmt->error)), 400);
       }
-      ob_clean();
       quit(json_encode(["path"=>$filepath]), 200);
     }
     else{
