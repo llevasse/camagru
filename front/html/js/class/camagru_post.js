@@ -11,15 +11,29 @@ class CamagruPost{
   likes;
   likedByClient;
   
-  constructor(id, url, posterUsername, uploadTime, comments, likes, likedByClient, {allowDelete= false} = {allowDelete:false}){
+  isPreview;
+  allowEdit;
+  
+  constructor(id, url, {
+			username = '',
+			uploadTime = new Date(DataTransfer.now()),
+			comments = [],
+			likes = 0,
+			likedByClient = false,
+	  	allowDelete = false,
+	  	allowEdit = false,
+	  	isPreview = false
+  	}){
     this.id = id;
     this.url = url;
-    this.posterUsername = posterUsername;
+    this.posterUsername = username;
     this.uploadTime = uploadTime;
     this.comments = comments;
     this.allowDelete = allowDelete;
     this.likes = likes;
     this.likedByClient = likedByClient;
+    this.allowEdit = allowEdit;
+    this.isPreview = isPreview;
   }
   
   getTimeDiffInHour(date1) {

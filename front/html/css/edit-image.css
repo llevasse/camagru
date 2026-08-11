@@ -2,6 +2,9 @@
   position: relative;
   height: fit-content;
   width: fit-content;
+  padding: 1em;
+  background-color: var(--color-foor);
+  border-radius: 1em;
 }
 
 .edited-buttons-container {

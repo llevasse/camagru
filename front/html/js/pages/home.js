@@ -43,7 +43,13 @@ var body = `
             let likes= value['likes'];
             let likedByClient = value['likes_from_client'];
             if (path && id && username && uploadTime && likes != undefined && likedByClient != undefined){
-              let post = new CamagruPost(id, path, username, uploadTime, comments, likes, likedByClient);
+							let post = new CamagruPost(id, path, {
+								username: username,
+								uploadTime: uploadTime,
+								comments: comments,
+								likes: likes,
+								likedByClient: likedByClient,
+							});
               postListContainer.appendChild(post.toHtmlElement());
             }
           })

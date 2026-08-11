@@ -83,7 +83,14 @@
               let likes= value['likes'];
               let likedByClient = value['likes_from_client'];
               if (path && id && uploadTime && likes != undefined && likedByClient != undefined){
-                let post = new CamagruPost(id, path, "", uploadTime, comments, likes, likedByClient, {allowDelete: true});
+                let post = new CamagruPost(id, path, {
+									username: "",
+									uploadTime: uploadTime,
+									comments: comments,
+									likes: likes,
+									likedByClient: likedByClient,
+									allowDelete: true,
+                });
                 postListContainer.insertBefore(post.toHtmlElement(), postListContainer.firstChild);
               }
             })

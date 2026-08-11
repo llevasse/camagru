@@ -264,8 +264,13 @@
       buttonsContainer.appendChild(this._createEditButton());
       buttonsContainer.appendChild(this._createDeleteButton());
       
-      e.appendChild(this.imgEl);    
-      e.appendChild(superposableImagesContainer);;      
+      let imagesContainer = document.createElement("div");
+      imagesContainer.classList.add("images-container");
+      
+      imagesContainer.appendChild(this.imgEl);
+      imagesContainer.appendChild(superposableImagesContainer);;      
+      
+      e.appendChild(imagesContainer);
       e.appendChild(buttonsContainer);
       return e;
     }
@@ -303,7 +308,7 @@
       </div>
       <div id="editing-side-div">
         <canvas id="editing-canvas"></canvas>
-        <h2>Unuploaded images</h2>
+        <h2>Previews</h2>
         <div id="edited-images-output">
         </div>
       </div>

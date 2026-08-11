@@ -51,17 +51,27 @@
 }
 
 #editing-side-div #edited-images-output{
-  align-self: center;
+	align-items: center;
+	width: -webkit-fill-available;
+	height: fit-content;
+	display: flex;
   flex: 1;
-  display: block;
-  width: 100%;
-  
+  gap: 1em;
+  flex-direction: column;
+
   img{
     max-width: 100%;
     max-height: 25dvh;
     object-fit: contain;
   }
 }
+
+.images-container {
+  border: .2em solid var(--color-one);
+  position: relative;
+  max-height: 25dvh;
+}
+
 #editing-video-img, #editing-video, #webcamDisabledMessage{
   display: none;
 }
@@ -178,13 +188,6 @@
 
 button:disabled{
   opacity: .5 !important;
-}
-
-/* Has at least 2 child */
-#edited-images-output:has(> :nth-child(2)){ 
-  display: grid !important;
-  grid-template-columns: auto auto;
-  gap: 1em;
 }
 
 h2{
