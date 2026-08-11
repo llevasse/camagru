@@ -122,6 +122,12 @@
 
 .superposableImageImgContainer.layered{
   position: absolute;
+  margin: 1px
+}
+
+.superposableImageImgContainer.layered:hover{
+	border: dashed var(--color-foor) 1px;
+	margin: 0px;
 }
 
 #layered-image-container{
