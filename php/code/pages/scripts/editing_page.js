@@ -53,6 +53,7 @@
       
       this.element.addEventListener("pointerdown", (ev)=>{this.onpointerdown(ev);})
       this.element.addEventListener("pointerup", (ev)=>{this.onpointerup(ev);})
+      this.element.addEventListener("pointerout", (ev)=>{this.onpointerup(ev);})
       this.element.addEventListener("pointermove", (ev)=>{this.onpointermove(ev);})
       this.element.addEventListener("wheel", (ev)=>{this.onwheel(ev);})
             
@@ -78,22 +79,6 @@
       this.element.style.height = `${this.heightInPercent * 100}%`;
     }
     
-    setLastPointerPosition(ev){
-			this.lastPointerPosition = {x: ev.clientX, y: ev.clientY};
-    }
-    
-    isPointerOnImage(){
-			if (this.lastPointerPosition == undefined) return false;
-			let imageSize = this.element.getBoundingClientRect();
-			if (this.lastPointerPosition.x < imageSize.right &&
-					this.lastPointerPosition.x > imageSize.left &&
-					this.lastPointerPosition.y > imageSize.top &&
-					this.lastPointerPosition.y < imageSize.bottom){
-				return true;
-			}
-			return false;
-    }
-    
     positionFromPointerEvent(ev){
       return {clientX : ev.clientX, clientY : ev.clientY,
               offsetX : ev.offsetX, offsetY : ev.offsetY,
@@ -108,10 +93,6 @@
         this.element.classList.add('movable');
         this.begPosition = this.positionFromPointerEvent(ev);
       }
-			this.setLastPointerPosition(ev);
-			if (this.isPointerOnImage() == false){
-				this.move = false;
-			}
     }
     
     onpointerup(ev){
@@ -126,10 +107,6 @@
           document.querySelector("#layered-image-container").dispatchEvent(new CustomEvent('removeChild', {'detail':this}));  
           this.element.remove();
         }
-				this.setLastPointerPosition(ev);
-				if (this.isPointerOnImage() == false){
-					this.move = false;
-				}
       }
     }
     
@@ -151,10 +128,6 @@
           
           this.element.style.left = `${this.xPositionPercent * 100}%`;
           this.element.style.top = `${this.yPositionPercent * 100}%`;
-          this.setLastPointerPosition(ev);
-					if (this.isPointerOnImage() == false){
-						this.move = false;
-					}
         }
       }
     }
@@ -165,9 +138,6 @@
 				const scaleUp = ev.deltaY < 0;
 				const offset = .05;
 				this.setImgSize(scaleUp ? offset : -offset)
-				if (this.isPointerOnImage() == false){
-					this.move = false;
-				}
 			}
     }
   }
