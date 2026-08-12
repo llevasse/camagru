@@ -10,10 +10,16 @@
   display: flex;
   flex-direction: row;
   width: 100%;
+  flex: 1;
 }
 
-#editing-container>div{
+#editing-main-div, #editing-side-div{
   flex: 1;
+}
+
+#editing-separator {
+	background-color: var(--color-one);
+	flex: 0.05;
 }
 
 #editing-main-div{
@@ -92,6 +98,7 @@
 #superposableImageImgContainer{
   display: grid !important;
   grid-template-columns: auto auto auto auto auto auto;
+  justify-content: space-evenly;
   /* gap: 1em; */
   flex-direction: row;
 }
@@ -104,9 +111,8 @@
 .superposableImageImgContainer, .superposableImageImg{
   display: block;
   height: var(--superposable-size);
-  /* width: var(--superposable-size); */
+  width: fit-content;
   object-fit: contain;
-  /* align-self: center; */
   justify-items: center;
 }
 

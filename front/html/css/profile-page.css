@@ -44,6 +44,7 @@ label#client-comment-notif-label {
 
 input#client-comment-notif {
   flex: 0;
+  width: unset !important;
 }
 
 #save-btn {

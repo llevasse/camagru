@@ -327,6 +327,7 @@
         <div id="superposableImageImgContainer">
         </div>
       </div>
+      <div id="editing-separator"></div>
       <div id="editing-side-div">
         <canvas id="editing-canvas"></canvas>
         <h2>Previews</h2>
