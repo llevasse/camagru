@@ -41,7 +41,12 @@
       this.img_url = img_url;
       
       const img = new Image();
-      img.onload = (ev)=>{this.initImgSizeInPercent()};
+      img.onload = (ev)=>{
+      	const percentages = this.getImgSizePercent()
+      	this.widthInPercent = percentages.width;
+      	this.heightInPercent = percentages.height;
+				this.setImgSize();
+      };
       img.src = img_url;
       img.classList.add("superposableImageImg");
       img.draggable = false;
@@ -60,22 +65,17 @@
       document.querySelector("#layered-image-container").dispatchEvent(new CustomEvent('newChild', {'detail':this}));
     }
     
-    // Needs to be called after img has been added to DOM
-    initImgSizeInPercent(){
+    getImgSizePercent(){
       const imgDimensions = this.element.lastChild.getBoundingClientRect();
       const srcDimensions = document.querySelector(".focusSource").getBoundingClientRect();
-      this.widthInPercent = imgDimensions.width /  srcDimensions.width;
-      this.heightInPercent = imgDimensions.height /  srcDimensions.height;
-      this.setImgSize();
+      const widthInPercent = imgDimensions.width /  srcDimensions.width;
+      const heightInPercent = imgDimensions.height /  srcDimensions.height;
+      return {width: widthInPercent, height: heightInPercent};
     }
     
     setImgSize(sizePercentIncrease = 0){
-			this.widthInPercent += sizePercentIncrease;
+			if (this.widthInPercent <= .1 || this.heightInPercent <= .1) return;
 			this.heightInPercent += sizePercentIncrease;
-
-			if (this.widthInPercent <= .05 || this.heightInPercent <= .05) return;
-
-      this.element.style.width = `${this.widthInPercent * 100}%`;
       this.element.style.height = `${this.heightInPercent * 100}%`;
     }
     
@@ -450,6 +450,9 @@
           if (image instanceof SuperposableImageLayered){
             image.allowMoving = false;
             let newImage = image;
+            const sizePercentages = image.getImgSizePercent();
+            newImage.widthInPercent = sizePercentages.width;
+            newImage.heightInPercent = sizePercentages.height;
             clonedSuperposables.push(newImage);
           }
         });
