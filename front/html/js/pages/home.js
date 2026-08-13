@@ -1,6 +1,7 @@
 var body = `
   <link id="style" rel="stylesheet" href="/css/feed.css">
   <h1>Camagru</h1>
+  <h2 id="no-post-found">No post found :(</h2>
   <div id="post-list-container"></div>
 `
 
@@ -10,6 +11,7 @@ var body = `
   
   let postListContainer = document.querySelector("#post-list-container");
   let shouldIKeepGoing = true;
+  let fetching = false;
 	
 	function getDocHeight() {
     var D = document;
@@ -19,29 +21,28 @@ var body = `
       D.body.clientHeight, D.documentElement.clientHeight
     );
   }
-
-  function scrollChecker() {
-    if (document.documentElement.scrollTop + document.documentElement.offsetHeight >= getDocHeight() - 10) { // make new search request when close to bottom of page
+  
+  document.onscroll = () => { 
+		if (document.documentElement.scrollTop + document.documentElement.offsetHeight >= getDocHeight() - 10) { // make new search request when close to bottom of page
       searchAndAddPosts(postListContainer.childElementCount);
     }
-  }
+  };
   
-  document.onscroll = () => { scrollChecker() };  
-  
-  function searchAndAddPosts(offset = 0){
-    if (shouldIKeepGoing == false) return;
-    postsService.getPosts(offset).then(response => {
+  async function searchAndAddPosts(offset = 0){
+    if (shouldIKeepGoing == false || fetching) return;
+		fetching = true;
+    await postsService.getPosts(offset).then(async response => {
       if (response instanceof Response && response.ok){
-        response.json().then(obj=>{
-          shouldIKeepGoing = obj.length == 5;
-          Object.values(obj).forEach(value=>{
-            let path = value['path'];
-            let id = value['id'];
-            let username = value['username'];
-            let uploadTime = value['uploaded_at'];
-            let comments = value['comments'];
-            let likes= value['likes'];
-            let likedByClient = value['likes_from_client'];
+        await response.json().then(obj=>{
+          shouldIKeepGoing = obj.length == 5; //No more post not yet fetched
+          Object.values(obj).forEach(postObj => {
+            let path = postObj['path'];
+            let id = postObj['id'];
+            let username = postObj['username'];
+            let uploadTime = postObj['uploaded_at'];
+            let comments = postObj['comments'];
+            let likes= postObj['likes'];
+            let likedByClient = postObj['likes_from_client'];
             if (path && id && username && uploadTime && likes != undefined && likedByClient != undefined){
 							let post = new CamagruPost(id, path, {
 								username: username,
@@ -56,6 +57,10 @@ var body = `
         })
       }
     })
+    fetching = false;
+    if (postListContainer.childElementCount != 0 && document.querySelector("#no-post-found") != undefined){
+			document.querySelector("#no-post-found").remove();
+    }
   }
 	searchAndAddPosts();
 }
