@@ -74,7 +74,7 @@
     }
     
     setImgSize(sizePercentIncrease = 0){
-			if (this.widthInPercent <= .1 || this.heightInPercent <= .1) return;
+			if ((this.widthInPercent <= .1 || this.heightInPercent <= .1) && sizePercentIncrease < 0) return;
 			this.heightInPercent += sizePercentIncrease;
       this.element.style.height = `${this.heightInPercent * 100}%`;
     }

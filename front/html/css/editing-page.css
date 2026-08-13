@@ -128,7 +128,8 @@
 
 .superposableImageImgContainer.layered{
   position: absolute;
-  margin: 1px
+  margin: 1px;
+  width: max-content;
 }
 
 .superposableImageImgContainer.layered:hover{
