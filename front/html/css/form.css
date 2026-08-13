@@ -2,7 +2,8 @@ form{
   background-color: var(--color-one);
   display: flex; 
   flex-direction: column;
-  width: fit-content;
+  width: 50vw;
+  max-width: 430px;
   gap: 1em;
   padding: 1em;
   
