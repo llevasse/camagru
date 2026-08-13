@@ -3,6 +3,7 @@
   include_once("/var/www/php/utils/get_db_conn.php");
   include_once("/var/www/php/utils/get_info_from_token.php");
   include_once("/var/www/php/utils/quit.php");
+  include_once("/var/www/php/utils/log.php");
   function send_password_email($userId, $username, $email) {
     $jwtCtrl = new Jwt($_ENV['EMAIL_SECRET_KEY']);
     
@@ -13,6 +14,7 @@
         "exp"=> $exp,
       ]);
     $resetLink = $_ENV['FRONTEND_URL'] . '/reset-password?token=' . $token;
+		stdoutLog("Reset password link for user '".$username."' : ".$resetLink);
     
     $API_KEY = $_ENV['BREVO_API_KEY'];
     
@@ -54,10 +56,11 @@
   }
     
   try{
+		ob_start();
     $conn = get_db_conn();
     $stmt;
     try{
-      $info = get_info_from_token();
+      $info = get_info_from_token('JWT_SECRET_KEY', false);
       $userId = $info['id'];
       
       $sql = "SELECT id, username, email FROM camagru.users WHERE id=?";

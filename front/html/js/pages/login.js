@@ -25,8 +25,16 @@ var body = `
 	
   let resetPasswordBtn = document.querySelector("#send-reset-password");	
   if (resetPasswordBtn instanceof HTMLElement){
-    resetPasswordBtn.onclick = ()=>{
-      userService.resetPasswordMail(username_input.value);
+    resetPasswordBtn.onclick = async ()=>{
+      const response = await userService.resetPasswordMail(username_input.value);
+      if (response instanceof Response && response.ok){
+				document.querySelector("#login-form").insertAdjacentHTML("afterend", `
+					<h2>
+						Password reset email has been sent to the email linked to "${username_input.value}"
+					</h2>`
+				);
+				document.querySelector("#login-form").remove();
+      }
     }
   }
 }
