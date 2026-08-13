@@ -159,6 +159,9 @@
       this.element.lastChild.classList.add("superposableImageImg")
       this.element.lastChild.src = img_url;
       this.element.lastChild.draggable = false;
+      this.element.lastChild.addEventListener('error', () => {
+      	this.element.remove();
+      });
     
       
       this.editingVideoContainer = document.querySelector("#editing-video-container");

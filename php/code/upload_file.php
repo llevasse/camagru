@@ -45,8 +45,9 @@
   
   function mergeFileAndSuperposables($filepath){
     try{
+			$destFilePath = "/var/www/pictures/$filepath";
       $superposables = $_POST["superposables"];
-      $dest = imagecreatefrompng("/var/www/pictures/$filepath");
+      $dest = imagecreatefrompng($destFilePath);
       $size = json_decode($_POST['imgSize']);
       $width = intval($size->width);
       $height = intval($size->height);
@@ -58,7 +59,10 @@
 				$copyToX = intval($value['x']);
 				$copyToY = intval($value['y']);
 				
-        $src = imagecreatefrompng("/var/www/pictures".$value['src']); // TODO handle error opening image.
+        $src = imagecreatefrompng("/var/www/pictures".$value['src']);
+        if ($src == false){
+			    continue;
+        }
         $srcWidth = imagesx($src);
         $srcHeight = imagesy($src);
 
@@ -67,7 +71,7 @@
 				// and resize superposable image from $srcWidth and $srcHeight to $scaledW and $scaledH
         imagecopyresampled($dest, $src, $copyToX, $copyToY, 0, 0, $scaledW, $scaledH, $srcWidth, $srcHeight );
       }
-      imagepng($dest, "/var/www/pictures/$filepath");
+      imagepng($dest, $destFilePath);
     }
     catch(Exception $e){
       throw $e;
