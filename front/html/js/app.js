@@ -24,7 +24,7 @@ document.addEventListener("clientCreated", ()=>{
 
 document.addEventListener("logout", ()=>{
   logButtons.classList.remove("logged")
-  
+  userService.client = null;
 })
 
 window.addEventListener("popstate", (e)=>{
