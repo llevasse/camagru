@@ -2,6 +2,7 @@
   include_once("/var/www/php/utils/get_db_conn.php");
   include_once("/var/www/php/utils/get_info_from_token.php");
   include_once("/var/www/php/utils/quit.php");
+  include_once("password_complexity_checker.php");
   ob_start();
   try {
     $conn = get_db_conn();
@@ -24,6 +25,8 @@
     $userId = $info['id'];
     $confirmed_password = $input["confirmedPassword"];
     $password = $input["password"];
+		
+		checkPasswordComplexity($password);
     
     if (strcmp($password, $confirmed_password) !== 0){
       quit(json_encode(array("message"=> "Passwords do not match")), 400);

@@ -2,6 +2,9 @@
   include_once("/var/www/php/utils/get_db_conn.php");
   include_once("/var/www/php/utils/get_info_from_token.php");
   include_once("/var/www/php/utils/quit.php");
+  include_once("password_complexity_checker.php");
+  include_once("username_checker.php");
+  include_once("email_checker.php");
   ob_start();
   try {
     $conn = get_db_conn();
@@ -22,26 +25,12 @@
     }
     
     $userId = $info['id'];
-    $comment_notif = $input["commentNotif"];
+    $comment_notif = $input["commentNotif"] == true ? 1 : 0;
     $username = $input["username"];
     $email = $input["email"];
     
-    if (!$email){
-      quit(json_encode(array("message"=> "No email provided")), 400);
-    }
-    if (strlen($email) > 100){
-      quit(json_encode(array("message"=> "Email too long provided")), 400);
-    }
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-      quit(json_encode(array("message"=> "Invalid email format")), 400);
-    }
-    $username = $input['username'];
-    if (!$username){
-      quit(json_encode(array("message"=> "No username provided")), 400);
-    }
-    if (strlen($username) > 30){
-      quit(json_encode(array("message"=> "username too long provided")), 400);
-    }
+    checkEmail($email);
+    checkUsername($username);
     
     $sql = "UPDATE camagru.users SET send_comment_notif=?, username=?, email=? WHERE id=?";
     $stmt = $conn->prepare($sql);    

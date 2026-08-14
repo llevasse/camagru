@@ -2,6 +2,9 @@
   include_once("utils/send_confirmation_email.php");
   include_once("utils/quit.php");
   include_once("utils/get_db_conn.php");
+  include_once("profile/password_complexity_checker.php");
+  include_once("profile/username_checker.php");
+  include_once("profile/email_checker.php");
   
   function containsAny($haystack, $needle){
 		foreach (str_split($haystack) as $char){
@@ -29,46 +32,13 @@
   $stmt = $conn->prepare($sql);
   
 	$username = $input['username'];
-  if (!$username){
-    quit(json_encode(array("message"=> "No username provided")), 400);
-  }
-  if (strlen($username) > 30){
-    quit(json_encode(array("message"=> "Username too long (max 30 character)")), 400);
-  }
-  if (preg_match("/\s/", $username)){
-    quit(json_encode(array("message"=> "Username can't contain any whitespace")), 400);
-  }
-
+	checkUsername($username);
+	
   $email = $input['email'];
-  if (!$email){
-    quit(json_encode(array("message"=> "No email provided")), 400);
-  }
-  if (strlen($email) > 100){
-    quit(json_encode(array("message"=> "Email too long provided")), 400);
-  }
-  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    quit(json_encode(array("message"=> "Invalid email format")), 400);
-  }
+  checkEmail($email);
 
   $password = $input['password'];
-  if (!$password){
-    quit(json_encode(array("message"=> "No password provided")), 400);
-  }
-	if (!preg_match("/[a-zA-Z]/", $password)){
-		quit(json_encode(array("message"=> "Password needs to contain at least one alphabetical latin characteur")), 400);
-	}
-	if (!preg_match("/[0-9]/", $password)){
-		quit(json_encode(array("message"=> "Password needs to contain at least one number")), 400);
-	}
-	if (!preg_match("/@|-|_|\+|=|<|>/", $password)){
-    quit(json_encode(array("message"=> "Password needs to contain one of these characters : @-_+=<>")), 400);
-  }
-  if (strlen($password) < 8){
-    quit(json_encode(array("message"=> "Password too short (min 8 character)")), 400);
-  }
-  if (strlen($password) > 100){
-    quit(json_encode(array("message"=> "Password too long (max 100 character)")), 400);
-  }
+  checkPasswordComplexity($password);
   
   $password = password_hash($input['password'], PASSWORD_DEFAULT);
   

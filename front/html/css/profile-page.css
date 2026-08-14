@@ -68,8 +68,12 @@ input#client-comment-notif {
 }
 
 #send-reset-password:hover {
-  font-size: 1em;
   opacity: 1;
+}
+
+#status {
+	align-self: center;
+  font-size: 0.8em;
 }
 
 #save-btn:hover {

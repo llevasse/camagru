@@ -37,7 +37,7 @@ class UserService{
     const profile = new FormData();
     profile.append('username', username);
     profile.append('email', email);
-    profile.append('commentNotif', commentNotif == true ? 1 : 0);
+    profile.append('commentNotif', commentNotif);
 
     return await myFetch("/profile/update.php", {
       method: "POST",
@@ -45,6 +45,15 @@ class UserService{
         "Authorization":"Bearer " + localStorage.getItem('token'),
       },
       body: profile
+    }).then(async (value) => {
+			return await value.json().then((obj)=>{
+        var message = "";
+        if (obj['message'])
+          message = obj['message'];
+        else
+          message = JSON.stringify(obj);
+        return message;
+			})
     })
   }
   

@@ -18,6 +18,7 @@
         <input type="checkbox" id="client-comment-notif">
       </label>
       <button id="save-btn" type="submit">save</button>
+      <span id="status"></span>
       <a id="send-reset-password">Send reset password mail</a>
     </form>
     <div id="client-posts-container">
@@ -33,14 +34,19 @@
       document.getElementById("container").innerHTML = this.body;
       
       async function updateProfile(event){
-        // console.log(event);
         if (event instanceof Event){
+					const status = document.querySelector("#status");
+					status.textContent = "";
           event.preventDefault();
           let usernameInput = document.querySelector("#client-username-input").value
           let emailInput = document.querySelector("#client-email-input").value
           let commentNotifInput = document.querySelector("#client-comment-notif").checked
           
-          userService.updateProfile(usernameInput, emailInput, commentNotifInput);
+          const response = await userService.updateProfile(usernameInput, emailInput, commentNotifInput);
+          console.log(response);
+          if (response){
+						status.textContent = response;
+          }
           return false;
         }
       }
@@ -67,6 +73,8 @@
       if (resetPasswordBtn instanceof HTMLElement){
         resetPasswordBtn.onclick = ()=>{
           userService.resetPasswordMail();
+					const status = document.querySelector("#status");
+          status.innerHTML = "Reset password email sent."
         }
       }
       
