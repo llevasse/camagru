@@ -198,6 +198,7 @@
       this.finalImageDataUrl = finalImageDataUrl;
       this.imgEl = new Image();
       this.imgEl.src = finalImageDataUrl;
+      this.imgEl.classList.add('base-img');
       this.uploaded = false;
     }
     
