@@ -23,17 +23,17 @@ var body = `
   }
   
   document.onscroll = () => { 
-		if (document.documentElement.scrollTop + document.documentElement.offsetHeight >= getDocHeight() - 10) { // make new search request when close to bottom of page
+		if (document.documentElement.scrollTop + document.documentElement.clientHeight >= getDocHeight() - 100) { // make new search request when close to bottom of page
       searchAndAddPosts(postListContainer.childElementCount);
     }
   };
   
   async function searchAndAddPosts(offset = 0){
-    if (shouldIKeepGoing == false || fetching) return;
+    if (shouldIKeepGoing == false || fetching == true) return;
 		fetching = true;
     await postsService.getPosts(offset).then(async response => {
       if (response instanceof Response && response.ok){
-        await response.json().then(obj=>{
+        return await response.json().then(obj=>{
           shouldIKeepGoing = obj.length == 5; //No more post not yet fetched
           Object.values(obj).forEach(postObj => {
             let path = postObj['path'];
