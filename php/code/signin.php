@@ -3,6 +3,15 @@
   include_once("utils/quit.php");
   include_once("utils/get_db_conn.php");
   
+  function containsAny($haystack, $needle){
+		foreach (str_split($haystack) as $char){
+			if (str_contains($needle, $char)){
+				return true;
+			}
+		}
+		return false;
+  }
+  
   ob_start();
   
   $conn = get_db_conn();
@@ -33,7 +42,10 @@
     quit(json_encode(array("message"=> "No username provided")), 400);
   }
   if (strlen($username) > 30){
-    quit(json_encode(array("message"=> "username too long provided")), 400);
+    quit(json_encode(array("message"=> "Username too long (max 30 character)")), 400);
+  }
+  if (containsAny($username, " \t\r\n")){
+    quit(json_encode(array("message"=> "Username can't contain any whitespace")), 400);
   }
   $password = $input['password'];
   if (!$password){
