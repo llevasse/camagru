@@ -43,7 +43,6 @@
           let commentNotifInput = document.querySelector("#client-comment-notif").checked
           
           const response = await userService.updateProfile(usernameInput, emailInput, commentNotifInput);
-          console.log(response);
           if (response){
 						status.textContent = response;
           }
