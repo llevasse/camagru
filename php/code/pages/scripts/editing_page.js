@@ -61,7 +61,10 @@
       this.element.addEventListener("pointerout", (ev)=>{this.onpointerup(ev);})
       this.element.addEventListener("pointermove", (ev)=>{this.onpointermove(ev);})
       this.element.addEventListener("wheel", (ev)=>{this.onwheel(ev);})
-            
+			document.addEventListener('touchmove', (ev) => {
+				if (this.move) ev.preventDefault();
+			}, {passive: false})
+      
       document.querySelector("#layered-image-container").dispatchEvent(new CustomEvent('newChild', {'detail':this}));
     }
     
@@ -98,7 +101,6 @@
     onpointerup(ev){
       if (this.allowMoving){
         this.move = false;
-        
         this.element.classList.remove('movable');
         document.querySelector("#layered-image-container").dispatchEvent(new CustomEvent('movedChild', {'detail':this}));      
         let parentSize = document.querySelector("#layered-image-container").getBoundingClientRect();
@@ -133,12 +135,18 @@
     }
     
     onwheel(ev){
+			console.log(ev);
 			if(this.move && ev instanceof WheelEvent && ev.ctrlKey == false){
 				ev.preventDefault();
 				const scaleUp = ev.deltaY < 0;
 				const offset = .05;
 				this.setImgSize(scaleUp ? offset : -offset)
 			}
+    }
+    
+    onscroll(ev){
+			console.log(ev);
+			ev.preventDefault();
     }
   }
   

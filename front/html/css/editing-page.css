@@ -209,7 +209,6 @@ h2{
 	#superposableImageImgContainer{
 		display: flex !important;
 		justify-content: space-evenly;
-		/* gap: 1em; */
 		flex-direction: row;
 		flex-wrap: wrap;
 	}
