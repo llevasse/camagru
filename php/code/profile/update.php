@@ -25,7 +25,7 @@
     }
     
     $userId = $info['id'];
-    $comment_notif = $input["commentNotif"] == true ? 1 : 0;
+    $comment_notif = $input["commentNotif"] == 'true' ? 1 : 0;
     $username = $input["username"];
     $email = $input["email"];
     
