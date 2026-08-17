@@ -201,3 +201,17 @@ h2{
   text-align: center;
   align-self: center;
 }
+
+@media (width < 960px) {
+	#editing-container {
+		flex-direction: column;
+	}
+	#superposableImageImgContainer{
+		display: flex !important;
+		justify-content: space-evenly;
+		/* gap: 1em; */
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+	
+}
